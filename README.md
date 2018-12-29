@@ -154,6 +154,7 @@ However, for larger complex projects, you might want to consider to use Docker-b
 # Reference
 * [VNC / NoVNC](https://github.com/novnc/noVNC)
 * [ConSol docker-headless-vnc-container](https://github.com/ConSol/docker-headless-vnc-container)
+* [Running GUI apps in Docker containers using VNC](http://blog.fx.lv/2017/08/running-gui-apps-in-docker-containers-using-vnc/)
 
 # See Also - Docker-based IDE
 * [openkbs/docker-atom-editor](https://hub.docker.com/r/openkbs/docker-atom-editor/)
