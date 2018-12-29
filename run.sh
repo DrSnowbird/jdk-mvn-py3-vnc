@@ -231,8 +231,8 @@ function replaceKeyValue() {
     sed -i -E 's/^('$keyLike'[[:blank:]]*=[[:blank:]]*).*/\1'$newValue'/' $inFile
 }
 #### ---- Replace docker.env with local user's UID and GID ----
-replaceKeyValue ${DOCKER_ENV_FILE} "USER_ID" "$(id -u $USER)"
-replaceKeyValue ${DOCKER_ENV_FILE} "GROUP_ID" "$(id -g $USER)"
+#replaceKeyValue ${DOCKER_ENV_FILE} "USER_ID" "$(id -u $USER)"
+#replaceKeyValue ${DOCKER_ENV_FILE} "GROUP_ID" "$(id -g $USER)"
 
 ## -- transform '-' and space to '_' 
 #instanceName=`echo $(basename ${imageTag})|tr '[:upper:]' '[:lower:]'|tr "/\-: " "_"`
@@ -250,9 +250,6 @@ RESTART_OPTION=no
 #VNC_RESOLUTION="1280x1024"
 VNC_RESOLUTION="1920x1280"
 
-echo ${DISPLAY}
-xhost +SI:localuser:$(id -un) 
-#DISPLAY=${MY_IP}:0 \
 docker run -it \
     --name=${instanceName} \
     --restart=${RESTART_OPTION} \
@@ -263,5 +260,4 @@ docker run -it \
     ${PORT_MAP} \
     ${imageTag} $*
 
-#cleanup
 

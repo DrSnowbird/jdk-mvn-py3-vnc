@@ -18,21 +18,29 @@ This image contains [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase
 # Note:
 This project mainly adopt the [ConSol docker-headless-vnc-container](https://github.com/ConSol/docker-headless-vnc-container) implementation.
 
-# Reference
-* https://blog.openshift.com/vnc-desktop-with-automation-broker/ 
-
 # Run - Demo
 ```bash
 ./run.sh
 ```
 You then use favorite browser in any device (PC, Mac, Tablet, mobile phone, etc), e.g., Firefox to connection to noVNC port
 ```
-http://172.17.0.4:6901/?password=vncpassword
+http://IP:6901/?password=vncpassword
 ```
 You will see [similar VNC page like this](https://github.com/DrSnowbird/jdk-mvn-py3-vnc/doc/VNC-noVNC-desktop-from-docker-container.png)
 Or, 
 ```
 you can you use VNC client application to connect to VNC port 5901
+
+## Log (example)
+```
+------------------ VNC environment started ------------------
+
+VNCSERVER started on DISPLAY= :1 
+	=> connect via VNC viewer with IP:5901
+
+noVNC HTML client started:
+	=> connect via http://IP:6901/?password=...
+
 ```
 
 # Change Resolution
@@ -142,6 +150,10 @@ Hello, World
 Hence, the alias above, "djavac" and "djava" is your docker-based "javac" and "java" commands and
 it will work the same way as your local installed Java's "javac" and "java" commands.
 However, for larger complex projects, you might want to consider to use Docker-based IDE.
+
+# Reference
+* [VNC / NoVNC](https://github.com/novnc/noVNC)
+* [ConSol docker-headless-vnc-container](https://github.com/ConSol/docker-headless-vnc-container)
 
 # See Also - Docker-based IDE
 * [openkbs/docker-atom-editor](https://hub.docker.com/r/openkbs/docker-atom-editor/)
