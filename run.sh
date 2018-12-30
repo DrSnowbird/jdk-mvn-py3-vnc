@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 MY_DIR=$(dirname "$(readlink -f "$0")")
 
@@ -8,6 +8,11 @@ if [ $# -lt 1 ]; then
     echo "e.g.: "
     echo "  ${0} ls -al "
 fi
+
+###########################################################################
+#### (Optional - if you want add Environmental Variable for Running Docker)
+###########################################################################
+ENV_VARIABLE_PATTERN=""
 
 ###################################################
 #### ---- Change this only to use your own ----
@@ -61,7 +66,6 @@ PACKAGE="${imageTag##*/}"
 LOCAL_VOLUME_DIR="${baseDataFolder}/${PACKAGE}"
 ## -- Container's internal Volume base DIR
 DOCKER_VOLUME_DIR="/home/developer"
-
 
 ###################################################
 #### ---- Detect docker ----
@@ -180,6 +184,64 @@ generatePortMapping
 echo ${PORT_MAP}
 
 ###################################################
+#### ---- Generate Environment Variables       ----
+###################################################
+ENV_VARS=""
+function generateProductEnvVars() {
+    ## -- product key patterns, e.g., "^MYSQL_*"
+    #productEnvVars=`grep -E "^[[:blank:]]*$1[a-zA-Z0-9_]+[[:blank:]]*=[[:blank:]]*[a-zA-Z0-9_]+[[:blank:]]*" ${DOCKER_ENV_FILE}`
+    productEnvVars=`grep -E "^[[:blank:]]*$1.+[[:blank:]]*=[[:blank:]]*.+[[:blank:]]*" ${DOCKER_ENV_FILE} | grep -v "^#"`
+    ENV_VARS=""
+    for vars in ${productEnvVars// /}; do
+        echo "Entry => $vars"
+        if [ "$1" != "" ]; then
+            matched=`echo $vars|grep -E "${1}"`
+            if [ ! "$matched" == "" ]; then
+                ENV_VARS="${ENV_VARS} -e ${vars}"
+            fi
+        else
+            ENV_VARS="${ENV_VARS} -e ${vars}"
+        fi
+    done
+}
+generateProductEnvVars "${ENV_VARIABLE_PATTERN}"
+echo "ENV_VARS="$ENV_VARS
+
+###################################################
+#### ---- Setup Docker Build Proxy ----
+###################################################
+# export NO_PROXY="localhost,127.0.0.1,.openkbs.org"
+# export HTTP_PROXY="http://gatekeeper-w.openkbs.org:80"
+# when using "wget", add "--no-check-certificate" to avoid https certificate checking failures
+# Note: You can also setup Docker CLI configuration file (~/.docker/config.json), e.g.
+# {
+#   "proxies": {
+#     "default": {
+#       "httpProxy": "http://gatekeeper-w.openkbs.org:80"
+#       "httpsProxy": "http://gatekeeper-w.openkbs.org:80"
+#      }
+#    }
+#  }
+#
+echo "... Setup Docker Run Proxy: ..."
+
+PROXY_PARAM=
+function generateProxyEnv() {
+    if [ "${HTTP_PROXY}" != "" ]; then
+        PROXY_PARAM="${PROXY_PARAM} -e HTTP_PROXY=${HTTP_PROXY}"
+    fi
+    if [ "${HTTPS_PROXY}" != "" ]; then
+        PROXY_PARAM="${PROXY_PARAM} -e HTTPS_PROXY=${HTTPS_PROXY}"
+    fi
+    if [ "${NO_PROXY}" != "" ]; then
+        PROXY_PARAM="${PROXY_PARAM} -e NO_PROXY=\"${NO_PROXY}\""
+    fi
+    ENV_VARS="${ENV_VARS} ${PROXY_PARAM}"
+}
+generateProxyEnv
+echo "ENV_VARS=${ENV_VARS}"
+
+###################################################
 #### ---- Function: Generate privilege String  ----
 ####      (Don't change!)
 ###################################################
@@ -218,7 +280,7 @@ function displayURL() {
 }
 
 ###################################################
-#### ---- Replace "Key=Value" withe new value ----
+#### ---- Replace "Key=Value" with new value   ----
 ###################################################
 function replaceKeyValue() {
     inFile=${1:-${DOCKER_ENV_FILE}}
@@ -234,9 +296,40 @@ function replaceKeyValue() {
 #replaceKeyValue ${DOCKER_ENV_FILE} "USER_ID" "$(id -u $USER)"
 #replaceKeyValue ${DOCKER_ENV_FILE} "GROUP_ID" "$(id -g $USER)"
 
+###################################################
+#### ---- Get "Key=Value" withe new value ----
+#### Usage: getKeyValuePair <inFile> <key>
+#### Output: Key=Value
+###################################################
+KeyValuePair=""
+function getKeyValuePair() {
+    KeyValuePair=""
+    inFile=${1:-${DOCKER_ENV_FILE}}
+    keyLike=$2
+    if [ "$2" == "" ]; then
+        echo "**** ERROR: Empty Key value! Abort!"
+        exit 1
+    fi
+    matchedKV=`grep -E "^[[:blank:]]*${keyLike}.+[[:blank:]]*=[[:blank:]]*.+[[:blank:]]*" ${DOCKER_ENV_FILE}`
+    for kv in $matchedKV; do
+        echo "KeyValuePair=${matchedKV// /}"
+    done
+}
+#getKeyValuePair "${DOCKER_ENV_FILE}" "MYSQL_DATABASE"
+
 ## -- transform '-' and space to '_' 
 #instanceName=`echo $(basename ${imageTag})|tr '[:upper:]' '[:lower:]'|tr "/\-: " "_"`
 instanceName=`echo $(basename ${imageTag})|tr '[:upper:]' '[:lower:]'|tr "/: " "_"`
+
+################################################
+##### ---- Product Specific Parameters ---- ####
+################################################
+#MYSQL_DATABASE=${MYSQL_DATABASE:-myDB}
+#MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-password}
+#MYSQL_USER=${MYSQL_USER:-user1}
+#MYSQL_PASSWORD=${MYSQL_PASSWORD:-password}
+#### ---- Generate Env. Variables ----
+echo ${ENV_VARS}
 
 echo "---------------------------------------------"
 echo "---- Starting a Container for ${imageTag}"

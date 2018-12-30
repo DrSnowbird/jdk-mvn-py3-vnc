@@ -6,10 +6,11 @@
 
 if [ $# -lt 1 ]; then
     echo "Usage: "
-    echo "  ${0} <image_tag>"
+    echo "  ${0} [<Dockerfile> <imageTag>]"
 fi
 MY_DIR=$(dirname "$(readlink -f "$0")")
 
+DOCKERFILE=${1:-Dockerfile}
 
 ###################################################
 #### ---- Change this only if want to use your own
@@ -36,15 +37,25 @@ function detectDockerEnvFile() {
 }
 detectDockerEnvFile
 
+###################################################
+#### ---- Container package information ----
+###################################################
+DOCKER_IMAGE_REPO=`echo $(basename $PWD)|tr '[:upper:]' '[:lower:]'|tr "/: " "_" `
+imageTag=${2:-"${ORGANIZATION}/${DOCKER_IMAGE_REPO}"}
 
 ###################################################
 #### ---- Generate build-arg arguments ----
 ###################################################
 BUILD_ARGS=""
+BUILD_DATE="`date -u +"%Y-%m-%dT%H:%M:%SZ"`"
+VCS_REF="`git rev-parse --short HEAD`"
+VCS_URL="https://github.com/`echo $(basename $PWD)`"
+BUILD_ARGS="--build-arg BUILD_DATE=${BUILD_DATE} --build-arg VCS_REF=${VCS_REF}"
+
 ## -- ignore entries start with "#" symbol --
 function generateBuildArgs() {
     for r in `cat ${DOCKER_ENV_FILE} | grep -v '^#'`; do
-        echo "entry=$r"
+        echo "entry=> $r"
         key=`echo $r | tr -d ' ' | cut -d'=' -f1`
         value=`echo $r | tr -d ' ' | cut -d'=' -f2`
         BUILD_ARGS="${BUILD_ARGS} --build-arg $key=$value"
@@ -54,14 +65,37 @@ generateBuildArgs
 echo "BUILD_ARGS=${BUILD_ARGS}"
 
 ###################################################
-#### ---- Container package information ----
+#### ---- Setup Docker Build Proxy ----
 ###################################################
-DOCKER_IMAGE_REPO=`echo $(basename $PWD)|tr '[:upper:]' '[:lower:]'|tr "/: " "_" `
-imageTag=${1:-"${ORGANIZATION}/${DOCKER_IMAGE_REPO}"}
+# export NO_PROXY="localhost,127.0.0.1,.openkbs.org"
+# export HTTP_PROXY="http://gatekeeper-w.openkbs.org:80"
+# when using "wget", add "--no-check-certificate" to avoid https certificate checking failures
+#
+echo "... Setup Docker Build Proxy: ..."
+PROXY_PARAM=
+function generateProxyArgs() {
+    if [ "${HTTP_PROXY}" != "" ]; then
+        PROXY_PARAM="${PROXY_PARAM} --build-arg HTTP_PROXY=${HTTP_PROXY}"
+    fi
+    if [ "${HTTPS_PROXY}" != "" ]; then
+        PROXY_PARAM="${PROXY_PARAM} --build-arg HTTPS_PROXY=${HTTPS_PROXY}"
+    fi
+    if [ "${NO_PROXY}" != "" ]; then
+        PROXY_PARAM="${PROXY_PARAM} --build-arg NO_PROXY=\"${NO_PROXY}\""
+    fi
+    BUILD_ARGS="${BUILD_ARGS} ${PROXY_PARAM}"
+}
+generateProxyArgs
+echo "BUILD_ARGS=> ${BUILD_ARGS}"
 
+###################################################
+#### ---- Buidl Container ----
+###################################################
+
+echo "========> imageTag: ${imageTag}"
 docker build --rm -t ${imageTag} \
     ${BUILD_ARGS} \
-	-f Dockerfile .
+	-f `pwd`/${DOCKERFILE} .
 
 echo "----> Shell into the Container in interactive mode: "
 echo "  docker exec -it --name <some-name> /bin/bash"
