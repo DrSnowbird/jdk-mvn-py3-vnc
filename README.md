@@ -1,4 +1,4 @@
-# VNC/noVNC base image: Java 8 (1.8.0_191) JDK + Maven 3.5 + Python 3.5 +  Gradle 4.9 + noVNC/VNC
+# Java 8 (1.8.0_191) JDK + Maven 3.5 + Python 3.5 +  Gradle 4.9 + noVNC/VNC (as Container Desktop)
 [![](https://images.microbadger.com/badges/image/openkbs/jdk-mvn-py3-vnc.svg)](https://microbadger.com/images/openkbs/jdk-mvn-py3-vnc "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/openkbs/jdk-mvn-py3-vnc.svg)](https://microbadger.com/images/openkbs/jdk-mvn-py3-vnc "Get your own version badge on microbadger.com")
 
 # License Agreement
@@ -22,36 +22,40 @@ This project mainly adopt the [ConSol docker-headless-vnc-container](https://git
 ```bash
 ./run.sh
 ```
-You then use favorite browser in any device (PC, Mac, Tablet, mobile phone, etc), e.g., Firefox to connection to noVNC port
+## Connect to VNC Viewer/Client or noVNC (Browser-based VNC)
+* connect via VNC viewer localhost:5901, default password: vncpassword
+* connect via noVNC HTML5 full client: http://localhost:6901/vnc.html, default password: vncpassword
+* connect via noVNC HTML5 lite client: http://localhost:6901/?password=vncpassword
+
+Once it is up, the default password is "vncpassword" to access with your web browser:
 ```
-http://IP:6901/?password=vncpassword
+http://<ip_address>:6901/vnc.html,
+e.g.
+=> Standalone Docker: http://localhost:6901/vnc.html
+=> Openshift Container Platform: http://<route-from-openshift>/vnc.html
+=> similarly for Kubernetes Container Platform: (similar to the Openshift above!)
 ```
-You will see [similar VNC page like this](https://github.com/DrSnowbird/jdk-mvn-py3-vnc/doc/VNC-noVNC-desktop-from-docker-container.png)
-Or, 
+# Run - Override VNC environment variables 
+The following VNC environment variables can be overwritten at the docker run phase to customize your desktop environment inside the container. You can change those variables using configurations CLI or Web-GUI with OpenShift, Kubernetes, DC/OS, etc.
 ```
-you can you use VNC client application to connect to VNC port 5901
-
-## Log (example)
-```
------------------- VNC environment started ------------------
-
-VNCSERVER started on DISPLAY= :1 
-	=> connect via VNC viewer with IP:5901
-
-noVNC HTML client started:
-	=> connect via http://IP:6901/?password=...
-
+VNC_COL_DEPTH, default is 24 , e.g., change to 16,
+    -e VNC_COL_DEPTH=16
+VNC_RESOLUTION, default: 1920x1080 , e.g., change to 1280x1024
+    -e VNC_RESOLUTION=1280x1024
+VNC_PW, default: vncpassword , e.g., change to MySpecial!(Password%)
+    -e VNC_PW=MySpecial!(Password%)
 ```
 
-# Change Resolution
+# Screen (Desktop) Resolution
+Two ways to change Screen resolutions.
 
-## Modify ./run.sh file
+## 1.) Modify ./run.sh file
 ```
 #VNC_RESOLUTION="1280x1024"
 VNC_RESOLUTION="1920x1280"
 ```
 
-## Modify Openshift or Kubernetes container run envionrment
+## 2.) Customize Openshift or Kubernetes container run envionrment
 ```
 Set up, say, VNC_RESOLUTION with value 1920x1280
 ```
