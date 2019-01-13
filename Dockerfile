@@ -135,8 +135,7 @@ RUN apt-get install -y sudo && \
 #RUN yum install -y sudo && \
 #    yum clean all
     
-RUN \
-    groupadd -f --gid ${GROUP_ID} ${USER} && \
+RUN groupadd -f --gid ${GROUP_ID} ${USER} && \
     #useradd ${USER} -m -d ${HOME} -s /bin/bash -u ${USER_ID} -g ${GROUP_ID} && \
     useradd ${USER} -m -d ${HOME} -s /bin/bash -u ${USER_ID} -g ${USER} && \
     ## -- Ubuntu -- \
@@ -147,8 +146,7 @@ RUN \
     export uid=${USER_ID} gid=${GROUP_ID} && \
     chown ${USER}:${USER} -R ${HOME}
     
-RUN \
-    mkdir -p ${HOME}/workspace && \
+RUN mkdir -p ${HOME}/workspace && \
     chown ${USER}:${USER} -R ${HOME}/workspace
 
 WORKDIR ${HOME}

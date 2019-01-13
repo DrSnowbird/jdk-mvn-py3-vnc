@@ -1,4 +1,4 @@
-# Java 8 (1.8.0_191) JDK + Maven 3.5 + Python 3.5 +  Gradle 4.9 + noVNC/VNC (as Container Desktop)
+# Java 8 (1.8.0_191) JDK + Maven 3.6 + Python 3.5 + PIP3 18.1 + Gradle 5.1 + noVNC/VNC (as Container Desktop)
 [![](https://images.microbadger.com/badges/image/openkbs/jdk-mvn-py3-vnc.svg)](https://microbadger.com/images/openkbs/jdk-mvn-py3-vnc "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/openkbs/jdk-mvn-py3-vnc.svg)](https://microbadger.com/images/openkbs/jdk-mvn-py3-vnc "Get your own version badge on microbadger.com")
 
 # License Agreement
@@ -10,8 +10,9 @@ This image contains [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase
 * java version "1.8.0_191"
   Java(TM) SE Runtime Environment (build 1.8.0_191-b12)
   Java HotSpot(TM) 64-Bit Server VM (build 25.191-b12, mixed mode)
-* Apache Maven 3.5.3
+* Apache Maven 3.6.0
 * Python 3.5.2
+* Gradle 5.1
 * Other tools: git wget unzip vim python python-setuptools python-dev python-numpy 
 * X11 display desktop
 
@@ -164,8 +165,11 @@ However, for larger complex projects, you might want to consider to use Docker-b
 # See Also - Docker-based IDE
 * [openkbs/docker-atom-editor](https://hub.docker.com/r/openkbs/docker-atom-editor/)
 * [openkbs/eclipse-photon-docker](https://hub.docker.com/r/openkbs/eclipse-photon-docker/)
+* [openkbs/eclipse-photon-vnc-docker](https://hub.docker.com/r/openkbs/eclipse-photon-vnc-docker/)
 * [openkbs/eclipse-oxygen-docker](https://hub.docker.com/r/openkbs/eclipse-oxygen-docker/)
 * [openkbs/intellj-docker](https://hub.docker.com/r/openkbs/intellij-docker/)
+* [openkbs/intellj-vnc-docker](https://hub.docker.com/r/openkbs/intellij-vnc-docker/)
+* [openkbs/knime-vnc-docker](https://hub.docker.com/r/openkbs/knime-vnc-docker/)
 * [openkbs/netbeans9-docker](https://hub.docker.com/r/openkbs/netbeans9-docker/)
 * [openkbs/netbeans](https://hub.docker.com/r/openkbs/netbeans/)
 * [openkbs/papyrus-sysml-docker](https://hub.docker.com/r/openkbs/papyrus-sysml-docker/)
@@ -173,6 +177,7 @@ However, for larger complex projects, you might want to consider to use Docker-b
 * [openkbs/scala-ide-docker](https://hub.docker.com/r/openkbs/scala-ide-docker/)
 * [openkbs/sublime-docker](https://hub.docker.com/r/openkbs/sublime-docker/)
 * [openkbs/webstorm-docker](https://hub.docker.com/r/openkbs/webstorm-docker/)
+* [openkbs/webstorm-vnc-docker](https://hub.docker.com/r/openkbs/webstorm-vnc-docker/)
 
 # See Also - Docker-based SQL GUI
 * [Sqlectron SQL GUI at openkbs/sqlectron-docker](https://hub.docker.com/r/openkbs/sqlectron-docker/)

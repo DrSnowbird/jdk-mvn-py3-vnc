@@ -113,23 +113,18 @@ ENV USER_NAME=${USER}
 
 ENV HOME=/home/${USER}
 
-RUN OS_TYPE=centos && if [ "${OS_TYPE}" = "ubuntu" ]; then apt-get install -y sudo; apt-get clean -y all; else if [ "${OS_TYPE}" = "centos" ]; then yum install -y sudo; yum clean -y all; fi; fi
-
-RUN OS_TYPE=${OS_TYPE} && \
-    groupadd -f --gid ${GROUP_ID} ${USER} && \
-    useradd ${USER} -m -d "${HOME}" -u ${USER_ID} -g ${GROUP_ID} && \
-    if [ "${OS_TYPE}" = "ubuntu" ]; then sudo usermod -aG sudo ${USER}; fi && \
-    if [ "${OS_TYPE}" = "centos" ]; then sudo usermod -aG wheel ${USER}; fi && \
-    echo "${USER} ALL=NOPASSWD:ALL" | sudo tee -a /etc/sudoers && \
+RUN groupadd -f --gid ${GROUP_ID} ${USER} && \
+    #useradd ${USER} -m -d ${HOME} -s /bin/bash -u ${USER_ID} -g ${GROUP_ID} && \
+    useradd ${USER} -m -d ${HOME} -s /bin/bash -u ${USER_ID} -g ${USER} && \
+    ## -- Ubuntu -- \
+    #usermod -aG sudo ${USER} && \
+    ## -- Centos -- \
+    usermod -aG wheel ${USER} && \
+    echo "${USER} ALL=NOPASSWD:ALL" | tee -a /etc/sudoers && \
     export uid=${USER_ID} gid=${GROUP_ID} && \
     chown ${USER}:${USER} -R ${HOME}
     
-RUN export OS_TYPE=${OS_TYPE} && \
-    if [ "${OS_TYPE}" = "ubuntu" ]; then apt-get clean -y all; fi && \
-    if [ "${OS_TYPE}" = "centos" ]; then yum clean -y all; fi
-    
-RUN \
-    mkdir -p ${HOME}/workspace && \
+RUN mkdir -p ${HOME}/workspace && \
     chown ${USER}:${USER} -R ${HOME}/workspace
 
 WORKDIR ${HOME}
@@ -141,4 +136,3 @@ ENTRYPOINT ["/bin/bash", "-c", "${STARTUPDIR}/vnc_startup.sh"]
 
 CMD ["--wait"]
 
-# CMD ["firefox"]
