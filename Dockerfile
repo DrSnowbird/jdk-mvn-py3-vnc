@@ -55,8 +55,7 @@ LABEL io.k8s.description="Headless VNC Container with ${WINDOW_MANAGER} window m
 ### Envrionment config
 ENV HOME=/home/developer 
 
-ENV \
-    TERM=xterm \
+ENV TERM=xterm \
     STARTUPDIR=/dockerstartup \
     INST_SCRIPTS=${HOME}/install \
     NO_VNC_HOME=${HOME}/noVNC \
@@ -131,6 +130,7 @@ ENV OS_TYPE=${OS_TYPE}
 ## -- Ubuntu --
 RUN apt-get install -y sudo && \
     apt-get clean all
+
 ## -- Centos --
 #RUN yum install -y sudo && \
 #    yum clean all
@@ -145,10 +145,20 @@ RUN groupadd -f --gid ${GROUP_ID} ${USER} && \
     echo "${USER} ALL=NOPASSWD:ALL" | tee -a /etc/sudoers && \
     export uid=${USER_ID} gid=${GROUP_ID} && \
     chown ${USER}:${USER} -R ${HOME}
-    
-RUN mkdir -p ${HOME}/workspace && \
-    chown ${USER}:${USER} -R ${HOME}/workspace
 
+##################################
+#### Set up user environments ####
+##################################
+ENV WORKSPACE=${HOME}/workspace
+
+VOLUME ${WORKSPACE}
+
+RUN mkdir -p ${WORKSPACE} && \
+    chown ${USER}:${USER} -R ${WORKSPACE}
+
+##################################
+#### VNC ####
+##################################
 WORKDIR ${HOME}
 
 USER ${USER}
