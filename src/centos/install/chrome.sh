@@ -3,6 +3,7 @@
 set -e
 
 echo "Install Chromium Browser"
+rpm --import https://dl-ssl.google.com/linux/linux_signing_key.pub
 yum -y install chromium chromium-libs chromium-libs-media
 yum clean all
 
