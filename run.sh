@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 MY_DIR=$(dirname "$(readlink -f "$0")")
 
@@ -77,7 +77,7 @@ DOCKER_VOLUME_DIR="/home/developer"
 #### ---- Detect Docker Run Env files ----
 ###################################################
 
-function detectDockerEnvFile() {
+function detectDockerRunEnvFile() {
     curr_dir=`pwd`
     if [ -s "${DOCKER_ENV_FILE}" ]; then
         echo "--- INFO: Docker Run Environment file '${DOCKER_ENV_FILE}' FOUND!"
@@ -85,16 +85,21 @@ function detectDockerEnvFile() {
         echo "*** WARNING: Docker Run Environment file '${DOCKER_ENV_FILE}' NOT found!"
         echo "*** WARNING: Searching for .env or docker.env as alternative!"
         echo "*** --->"
-        if [ -s "./.env" ]; then
-            echo "--- INFO: ./.env FOUND to use as Docker Run Environment file!"
-            DOCKER_ENV_FILE="./.env"
+        if [ -s "./docker-run.env" ]; then
+            echo "--- INFO: ./docker-run.env FOUND to use as Docker Run Environment file!"
+            DOCKER_ENV_FILE="./docker-run.env"
         else
-            echo "--- INFO: ./.env Docker Environment file (.env) NOT found!"
-            if [ -s "./docker.env" ]; then
-                echo "--- INFO: ./docker.env FOUND to use as Docker Run Environment file!"
-                DOCKER_ENV_FILE="./docker.env"
+            if [ -s "./.env" ]; then
+                echo "--- INFO: ./.env FOUND to use as Docker Run Environment file!"
+                DOCKER_ENV_FILE="./.env"
             else
-                echo "*** WARNING: Docker Environment file (.env) or (docker.env) NOT found!"
+                echo "--- INFO: ./.env Docker Environment file (.env) NOT found!"
+                if [ -s "./docker.env" ]; then
+                    echo "--- INFO: ./docker.env FOUND to use as Docker Run Environment file!"
+                    DOCKER_ENV_FILE="./docker.env"
+                else
+                    echo "*** WARNING: Docker Environment file (.env) or (docker.env) NOT found!"
+                fi
             fi
         fi
     fi
@@ -250,6 +255,15 @@ function generateProxyEnv() {
     if [ "${NO_PROXY}" != "" ]; then
         PROXY_PARAM="${PROXY_PARAM} -e NO_PROXY=\"${NO_PROXY}\""
     fi
+    if [ "${http_proxy}" != "" ]; then
+        PROXY_PARAM="${PROXY_PARAM} -e HTTP_PROXY=${http_proxy}"
+    fi
+    if [ "${https_proxy}" != "" ]; then
+        PROXY_PARAM="${PROXY_PARAM} -e HTTPS_PROXY=${https_proxy}"
+    fi
+    if [ "${no_proxy}" != "" ]; then
+        PROXY_PARAM="${PROXY_PARAM} -e NO_PROXY=\"${no_proxy}\""
+    fi
     ENV_VARS="${ENV_VARS} ${PROXY_PARAM}"
 }
 generateProxyEnv
@@ -354,27 +368,49 @@ cleanup
 #### run restart options: { no, on-failure, unless-stopped, always }
 RESTART_OPTION=no
 
-###########################################
-## -- VNC_RESOLUTION setup default --- ####
-###########################################
-if [ `echo $ENV_VAR|grep VNC_RESOLUTION` ]; then
-    #VNC_RESOLUTION="1280x1024"
-    VNC_RESOLUTION="1920x1080"
-    ENV_VARS="${ENV_VARS} -e VNC_RESOLUTION=${VNC_RESOLUTION}" 
-fi
 
-#########################
-## -- Docker Run --- ####
-#########################
+###########################
+#### -- Docker Run --- ####
+###########################
 set -x
 
-docker run -it \
-    --name=${instanceName} \
-    --restart=${RESTART_OPTION} \
-    ${privilegedString} \
-    ${ENV_VARS} \
-    ${VOLUME_MAP} \
-    ${PORT_MAP} \
-    ${imageTag} $*
+#################################
+## -- VNC-based Docker build --##
+#################################
+VNC_BUILD=1
 
-
+if [ $VNC_BUILD -gt 0 ]; then
+    #### ---- for VNC-based ---- ####
+    #############################################
+    #### -- VNC_RESOLUTION setup default --- ####
+    #############################################
+    if [ `echo $ENV_VAR|grep VNC_RESOLUTION` ]; then
+        #VNC_RESOLUTION=1280x1024
+        VNC_RESOLUTION=1920x1080
+        ENV_VARS="${ENV_VARS} -e VNC_RESOLUTION=${VNC_RESOLUTION}" 
+    fi
+	docker run -it \
+	    --name=${instanceName} \
+	    --restart=${RESTART_OPTION} \
+	    ${privilegedString} \
+	    ${ENV_VARS} \
+	    ${VOLUME_MAP} \
+	    ${PORT_MAP} \
+	    ${imageTag} $*
+else
+    #### ---- for X11-based ---- ####
+    echo ${DISPLAY}
+    xhost +SI:localuser:$(id -un) 
+    DISPLAY=${MY_IP}:0 \
+    docker run -it \
+        --name=${instanceName} \
+        --restart=${RESTART_OPTION} \
+        ${privilegedString} \
+        -e DISPLAY=$DISPLAY \
+        -v /tmp/.X11-unix:/tmp/.X11-unix \
+        --user $(id -u $USER) \
+        ${ENV_VARS} \
+        ${VOLUME_MAP} \
+        ${PORT_MAP} \
+        ${imageTag} $*
+fi
