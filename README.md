@@ -15,7 +15,7 @@ This image contains [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase
 * npm 6.4.1 + node v10.15.0 (from NodeSource official Node Distribution)
 * Gradle 5.1
 * Other tools: git wget unzip vim python python-setuptools python-dev python-numpy 
-* X11 display desktop
+* noVNC/VNC (as Cluster Container Desktop)
 
 # Note:
 This project mainly adopt the [ConSol docker-headless-vnc-container](https://github.com/ConSol/docker-headless-vnc-container) implementation.
