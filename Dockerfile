@@ -163,8 +163,7 @@ WORKDIR ${HOME}
 
 USER ${USER}
 
-#ENTRYPOINT ["/dockerstartup/vnc_startup.sh"]
-ENTRYPOINT ["/bin/bash", "-c", "${STARTUPDIR}/vnc_startup.sh"]
+ENTRYPOINT ["/dockerstartup/vnc_startup.sh"]
 
 CMD ["--wait"]
 
