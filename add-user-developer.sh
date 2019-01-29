@@ -7,7 +7,7 @@
 ARG GROUP_ID=${GROUP_ID:-1000}
 ENV GROUP_ID=${GROUP_ID}
 
-ENV USER_NAME=developer
+ENV USER_NAME=${1:-developer}
 ENV HOME=/home/${USER_NAME}
 
 RUN useradd ${USER_NAME} && \

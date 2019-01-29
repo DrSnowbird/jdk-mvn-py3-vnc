@@ -140,9 +140,8 @@ RUN apt-get install -y sudo && \
 #RUN yum install -y sudo && \
 #    yum clean all
     
-RUN groupadd -f --gid ${GROUP_ID} ${USER} && \
-    #useradd ${USER} -m -d ${HOME} -s /bin/bash -u ${USER_ID} -g ${GROUP_ID} && \
-    useradd ${USER} -m -d ${HOME} -s /bin/bash -u ${USER_ID} -g ${USER} && \
+RUN groupadd -f --gid ${GROUP_ID:-1000} ${USER} && \
+    useradd ${USER} -m -d ${HOME} -s /bin/bash -g ${USER} && \
     ## -- Ubuntu -- \
     usermod -aG sudo ${USER} && \
     ## -- Centos -- \
