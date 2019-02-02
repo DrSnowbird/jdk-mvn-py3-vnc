@@ -4,8 +4,8 @@
 #### ---- OS Type, Version, and Base Image: ----
 #### -------------------------------------------
 
-ARG OS_TYPE={OS_TYPE:-centos}
-#ARG OS_TYPE={OS_TYPE:-ubuntu}
+ARG OS_TYPE=centos
+#ARG OS_TYPE=ubuntu
 
 ARG OS_VERSION={OS_VERSION:-7}
 #ARG OS_VERSION={OS_VERSION:-16.04}
@@ -19,6 +19,8 @@ FROM centos:7
 #FROM ${OS_TYPE}:${OS_VERSION}
 
 MAINTAINER DrSnowbird "DrSnowbird@openkbs.org"
+
+ENV OS_TYPE=${OS_TYPE}
 
 #### ---------------------
 #### ---- USER, GROUP ----
@@ -52,25 +54,87 @@ LABEL io.k8s.description="Headless VNC Container with ${WINDOW_MANAGER} window m
       io.openshift.tags="vnc, ${OS_TYPE}, ${WINDOW_MANAGER}" \
       io.openshift.non-scalable=true
 
-### Envrionment config
-ENV HOME=/home/developer 
+#### -------------------------
+#### ---- user: developer ----
+#### -------------------------
+ENV USER=${USER:-developer}
+ENV USER_NAME=${USER}
 
-ENV \
-    TERM=xterm \
+ENV HOME=/home/${USER}
+
+RUN echo "****  OS_TYPE  ========> $OS_TYPE"
+
+RUN if [ "x$OS_TYPE" = "xubuntu" ] ; then echo Ubuntu; else echo NOT Ubuntu ; fi
+RUN set -x && if [ "${OS_TYPE}" = "ubuntu" ]; then apt-get install -y sudo; apt-get clean -y all; fi
+#RUN set -x && 
+#    if [ "${OS_TYPE}" = "ubuntu" ]; then \
+#        apt-get install -y sudo; \
+#        apt-get clean -y all; \
+#    fi
+
+RUN if [ "x$OS_TYPE" = "xcentos" ] ; then echo CentOS; else echo NOT Ubuntu ; fi
+RUN set -x && if [ x"${OS_TYPE}" = "xcentos" ]; then yum install -y sudo; yum clean -y all; fi
+
+#RUN set -x && \
+#    if [ "${OS_TYPE}" = "centos" ]; then \
+#        \yum install -y sudo; \
+#        yum clean -y all; \
+#    fi"
+RUN hello
+
+
+## -- Ubuntu --
+#RUN apt-get install -y sudo && apt-get clean all
+
+## -- Centos --
+#RUN yum install -y sudo && yum clean all
+
+RUN echo "USER =======> ${USER}"
+
+RUN groupadd ${USER} && useradd ${USER} -m -d ${HOME} -s /bin/bash -g ${USER} && \
+    ## -- Ubuntu -- \
+    usermod -aG sudo ${USER} && \
+    ## -- Centos -- \
+    #usermod -aG wheel ${USER} && \
+    echo "${USER} ALL=NOPASSWD:ALL" | tee -a /etc/sudoers && \
+    chown ${USER}:${USER} -R ${HOME}
+
+##################################
+#### Set up user environments ####
+##################################
+USER ${USER}
+WORKDIR ${HOME}
+
+ENV WORKSPACE=${HOME}/workspace
+ENV DATA=${HOME}/data
+
+#VOLUME ${WORKSPACE}
+#VOLUME ${DATA}
+
+RUN echo "USER =======> ${USER}"
+
+RUN mkdir -p ${WORKSPACE} ${DATA} 
+
+##################################
+#### ---- VNC / noVNC ----    ####
+##################################
+
+ENV TERM=xterm \
     STARTUPDIR=/dockerstartup \
     INST_SCRIPTS=${HOME}/install \
     NO_VNC_HOME=${HOME}/noVNC \
     VNC_COL_DEPTH=24 \
     VNC_VIEW_ONLY=false
 
+USER 0
 WORKDIR ${HOME}
 
 #### -----------------------------------------------------------------
 #### ---- VNC Resolution (1280x1024, 1600x1024, 1920x1280, etc.): ----
 #### -----------------------------------------------------------------
-ENV VNC_RESOLUTION=${VNC_RESOLUTION:-1920x1280}
-#ENV VNC_RESOLUTION=${VNC_RESOLUTION:-1600x1024}
 #ENV VNC_RESOLUTION=${VNC_RESOLUTION:-1280x1024}
+#ENV VNC_RESOLUTION=${VNC_RESOLUTION:-1600x800}
+ENV VNC_RESOLUTION=${VNC_RESOLUTION:-1920x1080}
 
 #### ----------------------
 #### ---- VNC Password ----
@@ -103,36 +167,25 @@ RUN ${INST_SCRIPTS}/libnss_wrapper.sh
 ADD ./src/common/scripts ${STARTUPDIR}
 RUN ${INST_SCRIPTS}/set_user_permission.sh ${STARTUPDIR} ${HOME}
 
-#### -------------------------
-#### ---- user: developer ----
-#### -------------------------
-#USER 1000
+#### --------------------------
+#### ---- XDG Open Utility ----
+#### --------------------------
+RUN apt-get install -y xdg-utils --fix-missing
 
-ENV USER=${USER:-developer}
-ENV USER_NAME=${USER}
-
-ENV HOME=/home/${USER}
-
-RUN groupadd -f --gid ${GROUP_ID} ${USER} && \
-    #useradd ${USER} -m -d ${HOME} -s /bin/bash -u ${USER_ID} -g ${GROUP_ID} && \
-    useradd ${USER} -m -d ${HOME} -s /bin/bash -u ${USER_ID} -g ${USER} && \
-    ## -- Ubuntu -- \
-    #usermod -aG sudo ${USER} && \
-    ## -- Centos -- \
-    usermod -aG wheel ${USER} && \
-    echo "${USER} ALL=NOPASSWD:ALL" | tee -a /etc/sudoers && \
-    export uid=${USER_ID} gid=${GROUP_ID} && \
-    chown ${USER}:${USER} -R ${HOME}
-    
-RUN mkdir -p ${HOME}/workspace && \
-    chown ${USER}:${USER} -R ${HOME}/workspace
-
+##################################
+#### ---- VNC Startup ---- ####
+##################################
 WORKDIR ${HOME}
 
 USER ${USER}
 
-#ENTRYPOINT ["/dockerstartup/vnc_startup.sh"]
-ENTRYPOINT ["/bin/bash", "-c", "${STARTUPDIR}/vnc_startup.sh"]
+ENTRYPOINT ["/dockerstartup/vnc_startup.sh"]
 
-CMD ["--wait"]
+# CMD ["--wait"]
 
+## ---- Debug Use ----
+CMD ["/bin/bash"]
+# (or)
+#COPY ./test/say_hello.sh $HOME/
+#RUN sudo chmod +x $HOME/say_hello.sh
+#CMD "$HOME/say_hello.sh"

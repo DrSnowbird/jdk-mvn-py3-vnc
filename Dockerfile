@@ -178,7 +178,7 @@ ENTRYPOINT ["/dockerstartup/vnc_startup.sh"]
 # CMD ["--wait"]
 
 ## ---- Debug Use ----
-#CMD ["/bin/bash"]
+CMD ["/bin/bash"]
 # (or)
 #COPY ./test/say_hello.sh $HOME/
 #RUN sudo chmod +x $HOME/say_hello.sh
