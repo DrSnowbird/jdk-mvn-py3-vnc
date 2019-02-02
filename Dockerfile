@@ -52,8 +52,62 @@ LABEL io.k8s.description="Headless VNC Container with ${WINDOW_MANAGER} window m
       io.openshift.tags="vnc, ${OS_TYPE}, ${WINDOW_MANAGER}" \
       io.openshift.non-scalable=true
 
-### Envrionment config
-ENV HOME=/home/developer 
+#### -------------------------
+#### ---- user: developer ----
+#### -------------------------
+ENV USER=${USER:-developer}
+ENV USER_NAME=${USER}
+
+ENV HOME=/home/${USER}
+
+ENV OS_TYPE=${OS_TYPE}
+
+#RUN set -x && \
+#    if [ "${OS_TYPE}" = "ubuntu" ]; then \
+#        apt-get install -y sudo; \
+#        apt-get clean -y all; \
+#    fi
+#RUN set -x && \
+#    if [ "${OS_TYPE}" = "centos" ]; then \
+#        \yum install -y sudo; \
+#        yum clean -y all; \
+#    fi"
+
+## -- Ubuntu --
+RUN apt-get install -y sudo && apt-get clean all
+
+## -- Centos --
+#RUN yum install -y sudo && yum clean all
+
+RUN echo "USER =======> ${USER}"
+
+RUN groupadd ${USER} && useradd ${USER} -m -d ${HOME} -s /bin/bash -g ${USER} && \
+    ## -- Ubuntu -- \
+    usermod -aG sudo ${USER} && \
+    ## -- Centos -- \
+    #usermod -aG wheel ${USER} && \
+    echo "${USER} ALL=NOPASSWD:ALL" | tee -a /etc/sudoers && \
+    chown ${USER}:${USER} -R ${HOME}
+
+##################################
+#### Set up user environments ####
+##################################
+USER ${USER}
+WORKDIR ${HOME}
+
+ENV WORKSPACE=${HOME}/workspace
+ENV DATA=${HOME}/data
+
+#VOLUME ${WORKSPACE}
+#VOLUME ${DATA}
+
+RUN echo "USER =======> ${USER}"
+
+RUN mkdir -p ${WORKSPACE} ${DATA} 
+
+##################################
+#### ---- VNC / noVNC ----    ####
+##################################
 
 ENV TERM=xterm \
     STARTUPDIR=/dockerstartup \
@@ -62,6 +116,7 @@ ENV TERM=xterm \
     VNC_COL_DEPTH=24 \
     VNC_VIEW_ONLY=false
 
+USER 0
 WORKDIR ${HOME}
 
 #### -----------------------------------------------------------------
@@ -111,57 +166,8 @@ RUN ${INST_SCRIPTS}/set_user_permission.sh ${STARTUPDIR} ${HOME}
 #### --------------------------
 RUN apt-get install -y xdg-utils --fix-missing
 
-#### -------------------------
-#### ---- user: developer ----
-#### -------------------------
-ENV USER=${USER:-developer}
-ENV USER_NAME=${USER}
-
-ENV HOME=/home/${USER}
-
-ENV OS_TYPE=${OS_TYPE}
-
-#RUN set -x && \
-#    if [ "${OS_TYPE}" = "ubuntu" ]; then \
-#        apt-get install -y sudo; \
-#        apt-get clean -y all; \
-#    fi
-#RUN set -x && \
-#    if [ "${OS_TYPE}" = "centos" ]; then \
-#        \yum install -y sudo; \
-#        yum clean -y all; \
-#    fi"
-
-## -- Ubuntu --
-RUN apt-get install -y sudo && \
-    apt-get clean all
-
-## -- Centos --
-#RUN yum install -y sudo && \
-#    yum clean all
-    
-RUN groupadd -f --gid ${GROUP_ID:-1000} ${USER} && \
-    useradd ${USER} -m -d ${HOME} -s /bin/bash -g ${USER} && \
-    ## -- Ubuntu -- \
-    usermod -aG sudo ${USER} && \
-    ## -- Centos -- \
-    #usermod -aG wheel ${USER} && \
-    echo "${USER} ALL=NOPASSWD:ALL" | tee -a /etc/sudoers && \
-    export uid=${USER_ID} gid=${GROUP_ID} && \
-    chown ${USER}:${USER} -R ${HOME}
-
 ##################################
-#### Set up user environments ####
-##################################
-ENV WORKSPACE=${HOME}/workspace
-
-VOLUME ${WORKSPACE}
-
-RUN mkdir -p ${WORKSPACE} && \
-    chown ${USER}:${USER} -R ${WORKSPACE}
-
-##################################
-#### VNC ####
+#### ---- VNC Startup ---- ####
 ##################################
 WORKDIR ${HOME}
 
@@ -169,5 +175,11 @@ USER ${USER}
 
 ENTRYPOINT ["/dockerstartup/vnc_startup.sh"]
 
-CMD ["--wait"]
+# CMD ["--wait"]
 
+## ---- Debug Use ----
+#CMD ["/bin/bash"]
+# (or)
+#COPY ./test/say_hello.sh $HOME/
+#RUN sudo chmod +x $HOME/say_hello.sh
+#CMD "$HOME/say_hello.sh"
