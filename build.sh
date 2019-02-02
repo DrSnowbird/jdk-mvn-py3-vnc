@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 set -e
 
@@ -35,7 +35,7 @@ fi
 #### ---- Whether to remove previous build cache ---- ####
 #### ---- Valid value: 0 (No remove); 1 (yes, remove)
 ##########################################################
-REMOVE_CACHE=0
+REMOVE_CACHE=1
 
 ###############################################################################
 ###############################################################################
@@ -52,7 +52,7 @@ REMOVE_CACHE=0
 ##########################################################
 REMOVE_CACHE_OPTION=""
 if [ ${REMOVE_CACHE} -gt 0 ]; then
-    REMOVE_CACHE_OPTION="--rm"
+    REMOVE_CACHE_OPTION="--no-cache --rm"
 fi
 
 ###################################################

@@ -4,23 +4,13 @@
 #### ---- OS Type, Version, and Base Image: ----
 #### -------------------------------------------
 
-ARG OS_TYPE=centos
-#ARG OS_TYPE=ubuntu
+ARG BASE_IMAGE=centos:7
+#ARG BASE_IMAGE=ubuntu:16.04
+#ARG BASE_IMAGE=openkbs/jdk-mvn-py3
 
-ARG OS_VERSION={OS_VERSION:-7}
-#ARG OS_VERSION={OS_VERSION:-16.04}
-
-ARG BASE_IMAGE=${BASE_IMAGE:-${OS_TYPE}:${OS_VERSION}}
-
-FROM centos:7
-#FROM ubuntu:16.04
-#FROM openkbs/jdk-mvn-py3
-#FROM ${BASE_IMAGE}
-#FROM ${OS_TYPE}:${OS_VERSION}
+FROM $BASE_IMAGE
 
 MAINTAINER DrSnowbird "DrSnowbird@openkbs.org"
-
-ENV OS_TYPE=${OS_TYPE}
 
 #### ---------------------
 #### ---- USER, GROUP ----
@@ -62,18 +52,25 @@ ENV USER_NAME=${USER}
 
 ENV HOME=/home/${USER}
 
-RUN echo "****  OS_TYPE  ========> $OS_TYPE"
 
-RUN if [ "x$OS_TYPE" = "xubuntu" ] ; then echo Ubuntu; else echo NOT Ubuntu ; fi
-RUN set -x && if [ "${OS_TYPE}" = "ubuntu" ]; then apt-get install -y sudo; apt-get clean -y all; fi
+ENV BASE_IMAGE=${BASE_IMAGE}
+ARG OS_TYPE=${BASE_IMAGE}
+ENV OS_TYPE=${BASE_IMAGE}
+RUN echo "============>  BASE_IMAGE  ========> $BASE_IMAGE <<========"
+RUN echo "============>  OS_TYPE  ========> $OS_TYPE <<========"
+ARG OS_TYPE=centos
+RUN echo "============>2  OS_TYPE  ========> $OS_TYPE <<========"
+
+RUN (export OS_TYPE=${OS_TYPE} && if [[ "${OS_TYPE} " =~ "ubuntu" ]]; then echo Ubuntu; else echo NOT Ubuntu ; fi)
+#RUN set -x && if [ "${OS_TYPE}" = "ubuntu" ]; then apt-get install -y sudo; apt-get clean -y all; fi
 #RUN set -x && 
 #    if [ "${OS_TYPE}" = "ubuntu" ]; then \
 #        apt-get install -y sudo; \
 #        apt-get clean -y all; \
 #    fi
 
-RUN if [ "x$OS_TYPE" = "xcentos" ] ; then echo CentOS; else echo NOT Ubuntu ; fi
-RUN set -x && if [ x"${OS_TYPE}" = "xcentos" ]; then yum install -y sudo; yum clean -y all; fi
+RUN (export OS_TYPE=${OS_TYPE} && if [[ "$OS_TYPE" =~ "centos" ]] ; then echo CentOS; else echo NOT CentOS ; fi)
+#RUN set -x && if [ x"${OS_TYPE}" = "xcentos" ]; then yum install -y sudo; yum clean -y all; fi
 
 #RUN set -x && \
 #    if [ "${OS_TYPE}" = "centos" ]; then \
