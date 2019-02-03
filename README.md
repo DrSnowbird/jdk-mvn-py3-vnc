@@ -1,4 +1,4 @@
-# Java 8 (1.8.0_201) JDK + Maven 3.6 + Python 3.5 + PIP3 18.1 + npm 6.4.1 + node v10.15.0 + Gradle 5.1 + noVNC/VNC (as Cluster Container Desktop)
+# Java 8 (1.8.0_201) JDK + Maven 3.6 + Python 3.5 + PIP 19 + npm 6 + node v11 + Gradle 5 + noVNC/VNC (as Cluster Container Desktop)
 [![](https://images.microbadger.com/badges/image/openkbs/jdk-mvn-py3-vnc.svg)](https://microbadger.com/images/openkbs/jdk-mvn-py3-vnc "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/openkbs/jdk-mvn-py3-vnc.svg)](https://microbadger.com/images/openkbs/jdk-mvn-py3-vnc "Get your own version badge on microbadger.com")
 
 # License Agreement
@@ -11,17 +11,30 @@ This image contains [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase
   Java(TM) SE Runtime Environment (build 1.8.0_201-b09)
   Java HotSpot(TM) 64-Bit Server VM (build 25.201-b09, mixed mode)
 * Apache Maven 3.6.0
-* Python 3.5.2
-* npm 6.4.1 + node v10.15.0 (from NodeSource official Node Distribution)
+* Python 3.5 + 2.7
+* Pip 19.0
+* npm 6.5 + node v11.8 (from NodeSource official Node Distribution)
 * Gradle 5.1
 * Other tools: git wget unzip vim python python-setuptools python-dev python-numpy 
-* noVNC/VNC (as Cluster Container Desktop)
+* VNC/noVNC for remote Desktop over Container Platform (Openshift, Kubernetes, etc.) 
 
 # Note:
 This project mainly adopt the [ConSol docker-headless-vnc-container](https://github.com/ConSol/docker-headless-vnc-container) implementation.
 
-# Run - Demo
-```bash
+# Run (recommended for easy-start)
+It's highly recommended to change vnc password to prevent others using the default password to get into your container, modify the file "**./docker.env**" as below and save the file before you hit, "**./run.sh**":
+```
+(./docker.env) file:
+
+#### ---- VNC Password: ----
+VNC_PW=VeryXtrongPasswordHere!
+
+#### ---- VNC Resolution (1280x800, 1920x1080, etc.): ----
+VNC_RESOLUTION=1920x1080
+
+```
+* Once the above update is done, you can now run the command below.
+```
 ./run.sh
 ```
 ## Connect to VNC Viewer/Client or noVNC (Browser-based VNC)
@@ -51,10 +64,10 @@ VNC_PW, default: vncpassword , e.g., change to MySpecial!(Password%)
 # Screen (Desktop) Resolution
 Two ways to change Screen resolutions.
 
-## 1.) Modify ./run.sh file
+## 1.) Modify ./docker-run.env file
 ```
 #VNC_RESOLUTION="1280x1024"
-VNC_RESOLUTION="1920x1280"
+VNC_RESOLUTION=1920x1280
 ```
 
 ## 2.) Customize Openshift or Kubernetes container run envionrment
@@ -192,7 +205,7 @@ However, for larger complex projects, you might want to consider to use Docker-b
 
 # Releases information
 ```
-root@1b69cb491038:/usr# ./printVersions.sh 
+developer@cf5bc1c3dd9f:~$ /usr/printVersions.sh 
 + echo JAVA_HOME=/usr/java
 JAVA_HOME=/usr/java
 + java -version
@@ -203,17 +216,26 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.201-b09, mixed mode)
 Apache Maven 3.6.0 (97c98ec64a1fdfee7767ce5ffb20918da4f719f3; 2018-10-24T18:41:47Z)
 Maven home: /usr/apache-maven-3.6.0
 Java version: 1.8.0_201, vendor: Oracle Corporation, runtime: /usr/jdk1.8.0_201/jre
-Default locale: en_US, platform encoding: ANSI_X3.4-1968
+Default locale: en_US, platform encoding: UTF-8
 OS name: "linux", version: "4.15.0-43-generic", arch: "amd64", family: "unix"
 + python -V
 Python 2.7.12
 + python3 -V
 Python 3.5.2
 + pip --version
-pip 18.1 from /usr/local/lib/python3.5/dist-packages/pip (python 3.5)
+pip 19.0.1 from /usr/local/lib/python3.5/dist-packages/pip (python 3.5)
 + pip3 --version
-pip 18.1 from /usr/local/lib/python3.5/dist-packages/pip (python 3.5)
+pip 19.0.1 from /usr/local/lib/python3.5/dist-packages/pip (python 3.5)
 + gradle --version
+
+Welcome to Gradle 5.1.1!
+
+Here are the highlights of this release:
+ - Control which dependencies can be retrieved from which repositories
+ - Production-ready configuration avoidance APIs
+
+For more details see https://docs.gradle.org/5.1.1/release-notes.html
+
 
 ------------------------------------------------------------
 Gradle 5.1.1
@@ -230,9 +252,9 @@ JVM:          1.8.0_201 (Oracle Corporation 25.201-b09)
 OS:           Linux 4.15.0-43-generic amd64
 
 + npm -v
-6.4.1
+6.5.0
 + node -v
-v10.15.0
+v11.8.0
 + cat /etc/lsb-release /etc/os-release
 DISTRIB_ID=Ubuntu
 DISTRIB_RELEASE=16.04
