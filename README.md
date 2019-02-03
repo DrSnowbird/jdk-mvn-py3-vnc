@@ -172,7 +172,6 @@ However, for larger complex projects, you might want to consider to use Docker-b
 * [openkbs/intellj-docker](https://hub.docker.com/r/openkbs/intellij-docker/)
 * [openkbs/intellj-vnc-docker](https://hub.docker.com/r/openkbs/intellij-vnc-docker/)
 * [openkbs/knime-vnc-docker](https://cloud.docker.com/u/openkbs/repository/docker/openkbs/knime-vnc-docker)
-* [openkbs/knime-vnc-docker](https://hub.docker.com/r/openkbs/knime-vnc-docker/)
 * [openkbs/mysql-workbench-vnc-docker](https://cloud.docker.com/u/openkbs/repository/docker/openkbs/mysql-workbench-vnc-docker)
 * [openkbs/netbeans10-docker](https://hub.docker.com/r/openkbs/netbeans10-docker/)
 * [openkbs/netbeans](https://hub.docker.com/r/openkbs/netbeans/)
@@ -184,7 +183,6 @@ However, for larger complex projects, you might want to consider to use Docker-b
 * [openkbs/sublime-docker](https://hub.docker.com/r/openkbs/sublime-docker/)
 * [openkbs/webstorm-docker](https://hub.docker.com/r/openkbs/webstorm-docker/)
 * [openkbs/webstorm-vnc-docker](https://cloud.docker.com/u/openkbs/repository/docker/openkbs/webstorm-vnc-docker)
-* [openkbs/webstorm-vnc-docker](https://hub.docker.com/r/openkbs/webstorm-vnc-docker/)
 * [openkbs/rest-dev-vnc-docker](https://cloud.docker.com/u/openkbs/repository/docker/openkbs/rest-dev-vnc-docker)
 
 # See Also - Docker-based SQL GUI

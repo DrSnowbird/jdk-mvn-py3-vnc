@@ -52,47 +52,19 @@ ENV USER_NAME=${USER}
 
 ENV HOME=/home/${USER}
 
-
-ENV BASE_IMAGE=${BASE_IMAGE}
-ARG OS_TYPE=${BASE_IMAGE}
-ENV OS_TYPE=${BASE_IMAGE}
-RUN echo "============>  BASE_IMAGE  ========> $BASE_IMAGE <<========"
-RUN echo "============>  OS_TYPE  ========> $OS_TYPE <<========"
-ARG OS_TYPE=centos
-RUN echo "============>2  OS_TYPE  ========> $OS_TYPE <<========"
-
-RUN (export OS_TYPE=${OS_TYPE} && if [[ "${OS_TYPE} " =~ "ubuntu" ]]; then echo Ubuntu; else echo NOT Ubuntu ; fi)
-#RUN set -x && if [ "${OS_TYPE}" = "ubuntu" ]; then apt-get install -y sudo; apt-get clean -y all; fi
-#RUN set -x && 
-#    if [ "${OS_TYPE}" = "ubuntu" ]; then \
-#        apt-get install -y sudo; \
-#        apt-get clean -y all; \
-#    fi
-
-RUN (export OS_TYPE=${OS_TYPE} && if [[ "$OS_TYPE" =~ "centos" ]] ; then echo CentOS; else echo NOT CentOS ; fi)
-#RUN set -x && if [ x"${OS_TYPE}" = "xcentos" ]; then yum install -y sudo; yum clean -y all; fi
-
-#RUN set -x && \
-#    if [ "${OS_TYPE}" = "centos" ]; then \
-#        \yum install -y sudo; \
-#        yum clean -y all; \
-#    fi"
-RUN hello
-
-
 ## -- Ubuntu --
 #RUN apt-get install -y sudo && apt-get clean all
 
 ## -- Centos --
-#RUN yum install -y sudo && yum clean all
+RUN yum install -y sudo && yum clean all
 
 RUN echo "USER =======> ${USER}"
 
 RUN groupadd ${USER} && useradd ${USER} -m -d ${HOME} -s /bin/bash -g ${USER} && \
     ## -- Ubuntu -- \
-    usermod -aG sudo ${USER} && \
+    #usermod -aG sudo ${USER} && \
     ## -- Centos -- \
-    #usermod -aG wheel ${USER} && \
+    usermod -aG wheel ${USER} && \
     echo "${USER} ALL=NOPASSWD:ALL" | tee -a /etc/sudoers && \
     chown ${USER}:${USER} -R ${HOME}
 
@@ -167,7 +139,8 @@ RUN ${INST_SCRIPTS}/set_user_permission.sh ${STARTUPDIR} ${HOME}
 #### --------------------------
 #### ---- XDG Open Utility ----
 #### --------------------------
-RUN apt-get install -y xdg-utils --fix-missing
+## -- Ubuntu --
+#RUN apt-get install -y xdg-utils --fix-missing
 
 ##################################
 #### ---- VNC Startup ---- ####
