@@ -142,6 +142,10 @@ RUN ${INST_SCRIPTS}/set_user_permission.sh ${STARTUPDIR} ${HOME}
 ## -- Ubuntu --
 #RUN apt-get install -y xdg-utils --fix-missing
 
+COPY ./src/common/vnc-xstartup ${HOME}/.vnc/startup && \
+    chown ${USER}:${USER} ${HOME}/.vnc/startup && \
+    chmod 0755 ${HOME}/.vnc/startup
+    
 ##################################
 #### ---- VNC Startup ---- ####
 ##################################

@@ -14,7 +14,7 @@ ARG BASE_IMAGE=${BASE_IMAGE:-${OS_TYPE}:${OS_VERSION}}
 
 #FROM centos:7
 #FROM ubuntu:16.04
-FROM openkbs/jdk-mvn-py3
+FROM openkbs/jdk-mvn-py3:non-root-beta
 #FROM ${BASE_IMAGE}
 #FROM ${OS_TYPE}:${OS_VERSION}
 
@@ -51,59 +51,6 @@ LABEL io.k8s.description="Headless VNC Container with ${WINDOW_MANAGER} window m
       io.openshift.expose-services="${NO_VNC_PORT}:http,${VNC_PORT}:xvnc" \
       io.openshift.tags="vnc, ${OS_TYPE}, ${WINDOW_MANAGER}" \
       io.openshift.non-scalable=true
-
-#### -------------------------
-#### ---- user: developer ----
-#### -------------------------
-ENV USER=${USER:-developer}
-ENV USER_NAME=${USER}
-
-ENV HOME=/home/${USER}
-
-ENV OS_TYPE=${OS_TYPE}
-
-#RUN set -x && \
-#    if [ "${OS_TYPE}" = "ubuntu" ]; then \
-#        apt-get install -y sudo; \
-#        apt-get clean -y all; \
-#    fi
-#RUN set -x && \
-#    if [ "${OS_TYPE}" = "centos" ]; then \
-#        \yum install -y sudo; \
-#        yum clean -y all; \
-#    fi"
-
-## -- Ubuntu --
-RUN apt-get install -y sudo && apt-get clean all
-
-## -- Centos --
-#RUN yum install -y sudo && yum clean all
-
-RUN echo "USER =======> ${USER}"
-
-RUN groupadd ${USER} && useradd ${USER} -m -d ${HOME} -s /bin/bash -g ${USER} && \
-    ## -- Ubuntu -- \
-    usermod -aG sudo ${USER} && \
-    ## -- Centos -- \
-    #usermod -aG wheel ${USER} && \
-    echo "${USER} ALL=NOPASSWD:ALL" | tee -a /etc/sudoers && \
-    chown ${USER}:${USER} -R ${HOME}
-
-##################################
-#### Set up user environments ####
-##################################
-USER ${USER}
-WORKDIR ${HOME}
-
-ENV WORKSPACE=${HOME}/workspace
-ENV DATA=${HOME}/data
-
-#VOLUME ${WORKSPACE}
-#VOLUME ${DATA}
-
-RUN echo "USER =======> ${USER}"
-
-RUN mkdir -p ${WORKSPACE} ${DATA} 
 
 ##################################
 #### ---- VNC / noVNC ----    ####

@@ -175,6 +175,7 @@ However, for larger complex projects, you might want to consider to use Docker-b
 * [ConSol docker-headless-vnc-container](https://github.com/ConSol/docker-headless-vnc-container)
 * [Running GUI apps in Docker containers using VNC](http://blog.fx.lv/2017/08/running-gui-apps-in-docker-containers-using-vnc/)
 * [Docker-headless-VNC-Container](https://github.com/DrSnowbird/docker-headless-vnc-container)
+* [NoVNC in CentOS](https://www.server-world.info/en/note?os=CentOS_7&p=x&f=10)
 
 # See also X11 and VNC/noVNC docker-based IDE collections
 * [openkbs/docker-atom-editor](https://hub.docker.com/r/openkbs/docker-atom-editor/)
@@ -274,3 +275,5 @@ UBUNTU_CODENAME=xenial
 
 ```
 
+# Known Issues
+Current releases the VNC port 5901 is not function correctly. However, port 6901 for noVNC / HTML5 is working correctly. Hence, for now, you have to use noVNC/HTML5 web browser to access the container.
