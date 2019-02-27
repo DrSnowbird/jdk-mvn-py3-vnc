@@ -15,6 +15,7 @@ ARG BASE_IMAGE=${BASE_IMAGE:-${OS_TYPE}:${OS_VERSION}}
 #FROM centos:7
 #FROM ubuntu:16.04
 FROM openkbs/jdk-mvn-py3:non-root-beta
+#FROM openkbs/jdk-mvn-py3
 #FROM ${BASE_IMAGE}
 #FROM ${OS_TYPE}:${OS_VERSION}
 

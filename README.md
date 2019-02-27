@@ -17,7 +17,8 @@ This image contains [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase
 * Gradle 5.1
 * Other tools: git wget unzip vim python python-setuptools python-dev python-numpy 
 * VNC/noVNC for remote Desktop over Container Platform (Openshift, Kubernetes, etc.) 
-
+* Firefox 65.0.1
+* 
 # Note:
 This project mainly adopt the [ConSol docker-headless-vnc-container](https://github.com/ConSol/docker-headless-vnc-container) implementation.
 
