@@ -27,3 +27,7 @@ tmp*
 *(copy)
 *swp
 *.SAVE
+
+*.pem
+*.crt
+
