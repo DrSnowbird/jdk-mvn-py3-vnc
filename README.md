@@ -112,64 +112,18 @@ docker run -d --name some-jdk-mvn-py3-vnc -v $PWD/data:/data -i -t my/jdk-mvn-py
 docker exec -it some-jdk-mvn-py3-vnc /bin/bash
 ```
 
-## Run Python code
-
-To run Python code
-
-```bash
-docker run -it --rm openkbs/jdk-mvn-py3-vnc python3 -c 'print("Hello World")'
+# Corporate Proxy Root and Intemediate Certificates setup for System and Web Browsers (FireFox, Chrome, etc)
+1. Save your corporate's Certificates in the currnet GIT directory, `./certificates`
+2. During Docker run command, 
 ```
-
-or,
-
-```bash
-docker run -i --rm openkbs/jdk-mvn-py3-vnc python3 < myPyScript.py
+   -v `pwd`/certificates:/certificates ... (the rest parameters)
 ```
-
-or,
-
-```bash
-mkdir ./data
-echo "print('Hello World')" > ./data/myPyScript.py
-docker run -it --rm --name some-jdk-mvn-py3-vnc -v "$PWD"/data:/data openkbs/jdk-mvn-py3-vnc python3 myPyScript.py
+If you want to map to different directory for certificates, e.g., /home/developer/certificates, then
 ```
-
-or,
-
-```bash
-alias dpy3='docker run --rm openkbs/jdk-mvn-py3-vnc python3'
-dpy3 -c 'print("Hello World")'
+   -v `pwd`/certificates:/home/developer/certificates -e SOURCE_CERTIFICATES_DIR=/home/developer/certificates ... (the rest parameters)
 ```
-
-## Compile or Run java while no local installation needed
-Remember, the default working directory, /data, inside the docker container -- treat is as "/".
-So, if you create subdirectory, "./data/workspace", in the host machine and
-the docker container will have it as "/data/workspace".
-
-```java
-#!/bin/bash -x
-mkdir ./data
-cat >./data/HelloWorld.java <<-EOF
-public class HelloWorld {
-   public static void main(String[] args) {
-      System.out.println("Hello, World");
-   }
-}
-EOF
-cat ./data/HelloWorld.java
-alias djavac='docker run -it --rm --name some-jdk-mvn-py3-vnc -v '$PWD'/data:/data openkbs/jdk-mvn-py3-vnc javac'
-alias djava='docker run -it --rm --name some-jdk-mvn-py3-vnc -v '$PWD'/data:/data openkbs/jdk-mvn-py3-vnc java'
-
-djavac HelloWorld.java
-djava HelloWorld
-```
-And, the output:
-```
-Hello, World
-```
-Hence, the alias above, "djavac" and "djava" is your docker-based "javac" and "java" commands and
-it will work the same way as your local installed Java's "javac" and "java" commands.
-However, for larger complex projects, you might want to consider to use Docker-based IDE.
+3. And, inside the Docker startup script to invoke the `~/scripts/setup_system_certificates.sh`. Note that the script assumes the certficates are in `/certificates` directory.
+4. The script `~/scripts/setup_system_certificates.sh` will automatic copy to target directory and setup certificates for both System commands (wget, curl, etc) to use and Web Browsers'.
 
 # Reference
 * [VNC / NoVNC](https://github.com/novnc/noVNC)
