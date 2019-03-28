@@ -67,6 +67,11 @@ ENV TERM=xterm \
 USER 0
 WORKDIR ${HOME}
 
+### Install CA certificates:
+RUN apt-get install -y ca-certificates 
+ADD ./certificates /certificates
+RUN ${SCRIPT_DIR}/setup_system_certificates.sh
+
 #### -----------------------------------------------------------------
 #### ---- VNC Resolution (1280x1024, 1600x1024, 1920x1280, etc.): ----
 #### -----------------------------------------------------------------
