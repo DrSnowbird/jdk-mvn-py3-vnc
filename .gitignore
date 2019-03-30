@@ -31,3 +31,6 @@ tmp*
 *.pem
 *.crt
 
+# temporary directory
+workspace
+data

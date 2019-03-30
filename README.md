@@ -15,7 +15,7 @@ This image contains [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase
 * Node v11.9.0 + npm 6.5.0 (from NodeSource official Node Distribution)
 * Gradle 5.1* Other tools: git wget unzip vim python python-setuptools python-dev python-numpy 
 * VNC/noVNC for remote Desktop over Container Platform (Openshift, Kubernetes, etc.) 
-* Firefox 65.0.1
+* Google-Chrome 73.0 + Firefox 66.0.2
 * 
 # Note:
 This project mainly adopt the [ConSol docker-headless-vnc-container](https://github.com/ConSol/docker-headless-vnc-container) implementation.
@@ -25,7 +25,7 @@ It's highly recommended to change vnc password to prevent others using the defau
 ```
 (./docker.env) file:
 
-#### ---- VNC Password: ----
+#### ---- VNC Password: (default is vncpassword) ----
 VNC_PW=VeryXtrongPasswordHere!
 
 #### ---- VNC Resolution (1280x800, 1920x1080, etc.): ----
@@ -41,7 +41,7 @@ VNC_RESOLUTION=1920x1080
 * connect via noVNC HTML5 full client: http://localhost:6901/vnc.html, default password: vncpassword
 * connect via noVNC HTML5 lite client: http://localhost:6901/?password=vncpassword
 
-Once it is up, the default password is "vncpassword" to access with your web browser:
+Once it is up, the default password is "'''vncpassword'''" to access with your web browser:
 ```
 http://<ip_address>:6901/vnc.html,
 e.g.
