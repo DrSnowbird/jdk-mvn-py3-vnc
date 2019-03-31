@@ -138,10 +138,13 @@ USER ${USER}
 
 ENTRYPOINT ["/dockerstartup/vnc_startup.sh"]
 
+ADD ./wrapper_process.sh $HOME/
+
 # CMD ["--wait"]
 
 ## ---- Debug Use ----
-CMD ["/bin/bash"]
+#CMD ["/bin/bash"]
+CMD "$HOME/wrapper_process.sh"
 
 # (or)
 #COPY ./test/say_hello.sh $HOME/
