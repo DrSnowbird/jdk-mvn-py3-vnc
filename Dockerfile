@@ -105,15 +105,23 @@ RUN ${INST_SCRIPTS}/no_vnc.sh
 # RUN ${INST_SCRIPTS}/firefox.sh
 RUN apt-get install -y firefox
 
-### Install Google Chrome (Stable) browser
-RUN ${INST_SCRIPTS}/google-chrome.sh
+#### ============================================
+#### ---- Google-Chrome install:  ----
+#### ============================================
+RUN ${INST_SCRIPTS}/google-chrome.sh 
+    
+#### ------------------------------------------------
+#### ---- Desktop setup (Google-Chrome, Firefox) ----
+#### ------------------------------------------------
+ADD ./config/Desktop $HOME/
 
 ### Install WINDOW_MANAGER (xfce or icewm) UI
 RUN ${INST_SCRIPTS}/${WINDOW_MANAGER}_ui.sh
 ADD ./src/common/${WINDOW_MANAGER}/ ${HOME}/
 
 ### configure startup
-RUN ${INST_SCRIPTS}/libnss_wrapper.sh
+# (remove this when Ubuntu 18.04 Bionic)
+# RUN ${INST_SCRIPTS}/libnss_wrapper.sh
 ADD ./src/common/scripts ${STARTUPDIR}
 RUN ${INST_SCRIPTS}/set_user_permission.sh ${STARTUPDIR} ${HOME}
 

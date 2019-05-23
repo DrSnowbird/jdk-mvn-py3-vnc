@@ -5,7 +5,11 @@ set -e
 echo "Install Google Chromium Browser"
 cd /tmp
                                           
-sudo apt-get install -y libindicator3-7 indicator-application libnss3-nssdb libnss3 libnspr4 libappindicator3-1 fonts-liberation xdg-utils
+sudo apt update -y 
+
+# (Ubuntu 16.04 only)
+# sudo apt-get install -y libindicator3-7 indicator-application libnss3-nssdb libnss3 libnspr4 libappindicator3-1 fonts-liberation xdg-utils
+sudo apt-get install -y libindicator3-7 indicator-application libnss3-dev libnss3-tools libnss3 libnspr4 libappindicator3-1 fonts-liberation xdg-utils
 
 wget -q -c https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 
@@ -25,6 +29,14 @@ sudo service dbus status
 sudo systemctl enable dbus
 
 sudo chown -R ${USER}:${USER} $HOME/.config
+
+## setup --no-sandbox for google-chrome replacement
+sudo cp /opt/google/chrome/google-chrome /opt/google/chrome/google-chrome.ORIG
+cat >./google-chrome <<-EOF
+#!/bin/bash
+/opt/google/chrome/google-chrome.ORIG --no-sandbox --disable-gpu $*
+EOF
+sudo cp ./google-chrome /opt/google/chrome/google-chrome
 
 sudo apt autoremove -y
 

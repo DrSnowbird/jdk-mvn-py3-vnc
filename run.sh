@@ -55,7 +55,7 @@ RESTART_OPTION=unless-stopped
 ##   Add any additional options here
 ## ------------------------------------------------------------------------
 # MORE_OPTIONS="--privileged=true"
-MORE_OPTIONS=
+MORE_OPTIONS="${MORE_OPTIONS} -v /dev/shm:/dev/shm -v /etc/hosts:/etc/hosts"
 
 ###############################################################################
 ###############################################################################
