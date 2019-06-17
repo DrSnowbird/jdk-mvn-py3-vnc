@@ -1,10 +1,6 @@
 # OpenJDK Java 8 (1.8.0_212) JDK + Maven 3.6 + Python 3.6/2.7 + pip 19 + node 11 + npm 6 + Gradle 5.3 + noVNC/VNC (as Cluster Container Desktop)
 [![](https://images.microbadger.com/badges/image/openkbs/jdk-mvn-py3-vnc.svg)](https://microbadger.com/images/openkbs/jdk-mvn-py3-vnc "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/openkbs/jdk-mvn-py3-vnc.svg)](https://microbadger.com/images/openkbs/jdk-mvn-py3-vnc "Get your own version badge on microbadger.com")
 
-# License Agreement
-By using this image, you agree the [Oracle Java JDK License](http://www.oracle.com/technetwork/java/javase/terms/license/index.html).
-This image contains [Oracle JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html). You must accept the [Oracle Binary Code License Agreement for Java SE](http://www.oracle.com/technetwork/java/javase/terms/license/index.html) to use this image.
-
 # Components
 * VNC/noVNC for both browswer-based VNC and VNC-client to connect to use Desktop GUI from Docker container.
 * openjdk version "1.8.0_212"
