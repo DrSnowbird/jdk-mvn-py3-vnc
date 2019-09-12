@@ -116,6 +116,7 @@ RUN ${INST_SCRIPTS}/google-chrome.sh
 ADD ./config/Desktop $HOME/
 
 ### Install WINDOW_MANAGER (xfce or icewm) UI
+RUN apt-get --fix-missing update
 RUN ${INST_SCRIPTS}/${WINDOW_MANAGER}_ui.sh
 ADD ./src/common/${WINDOW_MANAGER}/ ${HOME}/
 
