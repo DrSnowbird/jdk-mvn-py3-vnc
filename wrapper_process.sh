@@ -11,6 +11,6 @@ echo ">>>> Who am i: `whoami` ; UID=`id -u` ; GID=`id -g`"
 
 #/bin/bash 
 
-/usr/bin/google-chrome
+/usr/bin/google-chrome --disable-gpu
 
 tail -f /dev/null

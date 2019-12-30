@@ -8,7 +8,8 @@
 ARG OS_TYPE={OS_TYPE:-ubuntu}
 
 #ARG OS_VERSION={OS_VERSION:-7}
-ARG OS_VERSION={OS_VERSION:-16.04}
+#ARG OS_VERSION={OS_VERSION:-16.04}
+ARG OS_VERSION={OS_VERSION:-18.04}
 
 ARG BASE_IMAGE=${BASE_IMAGE:-${OS_TYPE}:${OS_VERSION}}
 
@@ -138,9 +139,15 @@ RUN chmod a+x /dockerstartup/vnc_startup.sh && \
     mkdir ${HOME}/.local && \
     chown -R ${USER}:${USER} ${HOME}/.config ${HOME}/.local
 
-##################################
+#################################################################
+#### ---- Fix missing: /host/run/dbus/system_bus_socket ---- ####
+#################################################################
+RUN sudo mkdir -p /host/run/dbus/system_bus_socket
+
+###############################
 #### ---- VNC Startup ---- ####
-##################################
+###############################
+
 WORKDIR ${HOME}
 
 USER ${USER}
