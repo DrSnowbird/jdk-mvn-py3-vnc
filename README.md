@@ -1,4 +1,4 @@
-# OpenJDK Java 8 (1.8.0_212) JDK + Maven 3.6 + Python 3.6/2.7 + pip 19 + node 11 + npm 6 + Gradle 5.3 + noVNC/VNC (as Cluster Container Desktop)
+# OpenJDK Java 8 (1.8.0_232) JDK + Maven 3.6 + Python 3.6/2.7 + pip 19 + node 13 + npm 6 + Gradle 6 + noVNC/VNC (as Cluster Container Desktop)
 [![](https://images.microbadger.com/badges/image/openkbs/jdk-mvn-py3-vnc.svg)](https://microbadger.com/images/openkbs/jdk-mvn-py3-vnc "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/openkbs/jdk-mvn-py3-vnc.svg)](https://microbadger.com/images/openkbs/jdk-mvn-py3-vnc "Get your own version badge on microbadger.com")
 
 # Components
@@ -6,10 +6,10 @@
 * openjdk version "1.8.0_232"
   OpenJDK Runtime Environment (build 1.8.0_232-8u232-b09-0ubuntu1~18.04.1-b09)
   OpenJDK 64-Bit Server VM (build 25.232-b09, mixed mode)
-* Apache Maven 3.6.0
-* Python 3.6 / Python 2.7 + pip 19.2 + Python3 virtual environments (venv, virtualenv, virtualenvwrapper, mkvirtualenv, ..., etc.)
-* Node v12.10.0 + npm 6.10.2 (from NodeSource official Node Distribution)
-* Gradle 5.6
+* Apache Maven 3.6
+* Python 3.6 / Python 2.7 + pip 19 + Python3 virtual environments (venv, virtualenv, virtualenvwrapper, mkvirtualenv, ..., etc.)
+* Node v13 + npm 6 (from NodeSource official Node Distribution)
+* Gradle 6
 * Other tools: git wget unzip vim python python-setuptools python-dev python-numpy, ..., etc.
 * VNC/noVNC for remote Desktop over Container Platform (Openshift, Kubernetes, etc.) 
 * Google-Chrome 73.0 + Firefox 66.0.2
@@ -156,7 +156,7 @@ If you want to map to different directory for certificates, e.g., /home/develope
 
 # Releases information
 ```
-developer@b26dbf483e02:~$ /usr/scripts/printVersions.sh 
+developer@e8eaadc9abc1:~$ /usr/scripts/printVersions.sh 
 + echo JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 + java -version
@@ -168,7 +168,7 @@ Apache Maven 3.6.3 (cecedd343002696d0abb50b32b541b8a6ba2883f)
 Maven home: /usr/apache-maven-3.6.3
 Java version: 1.8.0_232, vendor: Private Build, runtime: /usr/lib/jvm/java-8-openjdk-amd64/jre
 Default locale: en_US, platform encoding: UTF-8
-OS name: "linux", version: "5.0.0-37-generic", arch: "amd64", family: "unix"
+OS name: "linux", version: "5.3.0-28-generic", arch: "amd64", family: "unix"
 + python -V
 Python 2.7.15+
 + python3 -V
@@ -190,7 +190,7 @@ Kotlin:       1.3.50
 Groovy:       2.5.8
 Ant:          Apache Ant(TM) version 1.10.7 compiled on September 1 2019
 JVM:          1.8.0_232 (Private Build 25.232-b09)
-OS:           Linux 5.0.0-37-generic amd64
+OS:           Linux 5.3.0-28-generic amd64
 
 + npm -v
 6.13.4
