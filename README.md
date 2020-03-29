@@ -3,16 +3,17 @@
 
 # Components
 * VNC/noVNC for both browswer-based VNC and VNC-client to connect to use Desktop GUI from Docker container.
-* openjdk version "1.8.0_232"
-  OpenJDK Runtime Environment (build 1.8.0_232-8u232-b09-0ubuntu1~18.04.1-b09)
-  OpenJDK 64-Bit Server VM (build 25.232-b09, mixed mode)
+* Ubuntu 18.04 LTS now and we will use Ubuntu 20.04 on or about 2020-04-15 as LTS Docker base image.
+* openjdk version "1.8.0_242"
+  OpenJDK Runtime Environment (build 1.8.0_242-8u242-b08-0ubuntu3~18.04-b08)
+  OpenJDK 64-Bit Server VM (build 25.242-b08, mixed mode)
 * Apache Maven 3.6
 * Python 3.6 / Python 2.7 + pip 19 + Python3 virtual environments (venv, virtualenv, virtualenvwrapper, mkvirtualenv, ..., etc.)
 * Node v13 + npm 6 (from NodeSource official Node Distribution)
 * Gradle 6
 * Other tools: git wget unzip vim python python-setuptools python-dev python-numpy, ..., etc.
 * VNC/noVNC for remote Desktop over Container Platform (Openshift, Kubernetes, etc.) 
-* Google-Chrome 73.0 + Firefox 66.0.2
+* Google-Chrome 80.0 + Firefox 74.0
 
 # Note:
 This project mainly adopt the [ConSol docker-headless-vnc-container](https://github.com/ConSol/docker-headless-vnc-container) implementation.
@@ -156,27 +157,27 @@ If you want to map to different directory for certificates, e.g., /home/develope
 
 # Releases information
 ```
-developer@e8eaadc9abc1:~$ /usr/scripts/printVersions.sh 
+developer@484b041140df:~$ /usr/scripts/printVersions.sh 
 + echo JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 + java -version
-openjdk version "1.8.0_232"
-OpenJDK Runtime Environment (build 1.8.0_232-8u232-b09-0ubuntu1~18.04.1-b09)
-OpenJDK 64-Bit Server VM (build 25.232-b09, mixed mode)
+openjdk version "1.8.0_242"
+OpenJDK Runtime Environment (build 1.8.0_242-8u242-b08-0ubuntu3~18.04-b08)
+OpenJDK 64-Bit Server VM (build 25.242-b08, mixed mode)
 + mvn --version
 Apache Maven 3.6.3 (cecedd343002696d0abb50b32b541b8a6ba2883f)
 Maven home: /usr/apache-maven-3.6.3
-Java version: 1.8.0_232, vendor: Private Build, runtime: /usr/lib/jvm/java-8-openjdk-amd64/jre
+Java version: 1.8.0_242, vendor: Private Build, runtime: /usr/lib/jvm/java-8-openjdk-amd64/jre
 Default locale: en_US, platform encoding: UTF-8
-OS name: "linux", version: "5.3.0-28-generic", arch: "amd64", family: "unix"
+OS name: "linux", version: "5.3.0-42-generic", arch: "amd64", family: "unix"
 + python -V
 Python 2.7.15+
 + python3 -V
 Python 3.6.9
 + pip --version
-pip 19.3.1 from /usr/local/lib/python3.6/dist-packages/pip (python 3.6)
+pip 20.0.2 from /usr/local/lib/python3.6/dist-packages/pip (python 3.6)
 + pip3 --version
-pip 19.3.1 from /usr/local/lib/python3.6/dist-packages/pip (python 3.6)
+pip 20.0.2 from /usr/local/lib/python3.6/dist-packages/pip (python 3.6)
 + gradle --version
 
 ------------------------------------------------------------
@@ -189,13 +190,13 @@ Revision:     fad121066a68c4701acd362daf4287a7c309a0f5
 Kotlin:       1.3.50
 Groovy:       2.5.8
 Ant:          Apache Ant(TM) version 1.10.7 compiled on September 1 2019
-JVM:          1.8.0_232 (Private Build 25.232-b09)
-OS:           Linux 5.3.0-28-generic amd64
+JVM:          1.8.0_242 (Private Build 25.242-b08)
+OS:           Linux 5.3.0-42-generic amd64
 
 + npm -v
-6.13.4
+6.13.7
 + node -v
-v13.5.0
+v13.9.0
 + cat /etc/lsb-release /etc/os-release
 DISTRIB_ID=Ubuntu
 DISTRIB_RELEASE=18.04
