@@ -1,19 +1,19 @@
-# OpenJDK Java 8 (1.8.0) + Maven 3.6 + Python 3.6/2.7 + pip 19 + node 13 + npm 6 + Gradle 6 + noVNC/VNC (as Cluster Container Desktop)
+# OpenJDK Java 8 (1.8.0_252) + Maven 3.6 + Python 3.6/2.7 + pip 20 + node 14 + npm 6.14 + Gradle 6 + noVNC/VNC (as Cluster Container Desktop)
 [![](https://images.microbadger.com/badges/image/openkbs/jdk-mvn-py3-vnc.svg)](https://microbadger.com/images/openkbs/jdk-mvn-py3-vnc "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/openkbs/jdk-mvn-py3-vnc.svg)](https://microbadger.com/images/openkbs/jdk-mvn-py3-vnc "Get your own version badge on microbadger.com")
 
 # Components
 * VNC/noVNC for both browswer-based VNC and VNC-client to connect to use Desktop GUI from Docker container.
 * Ubuntu 18.04 LTS now and we will use Ubuntu 20.04 on or about 2020-04-15 as LTS Docker base image.
-* openjdk version "1.8.0_242"
-  OpenJDK Runtime Environment (build 1.8.0_242-8u242-b08-0ubuntu3~18.04-b08)
-  OpenJDK 64-Bit Server VM (build 25.242-b08, mixed mode)
+* openjdk version "1.8.0_252"
+  OpenJDK Runtime Environment (build 1.8.0_252-8u252-b09-1~18.04-b09)
+  OpenJDK 64-Bit Server VM (build 25.252-b09, mixed mode)
 * Apache Maven 3.6
 * Python 3.6 / Python 2.7 + pip 19 + Python3 virtual environments (venv, virtualenv, virtualenvwrapper, mkvirtualenv, ..., etc.)
 * Node v13 + npm 6 (from NodeSource official Node Distribution)
 * Gradle 6
 * Other tools: git wget unzip vim python python-setuptools python-dev python-numpy, ..., etc.
 * VNC/noVNC for remote Desktop over Container Platform (Openshift, Kubernetes, etc.) 
-* Google-Chrome 80.0 + Firefox 74.0
+* Google-Chrome 81.0 + Firefox 75.0
 
 # Note:
 This project mainly adopt the [ConSol docker-headless-vnc-container](https://github.com/ConSol/docker-headless-vnc-container) implementation.
@@ -158,21 +158,25 @@ If you want to map to different directory for certificates, e.g., /home/develope
 
 # Releases information
 ```
-developer@484b041140df:~$ /usr/scripts/printVersions.sh 
+developer@234434a87b9c:~$ /usr/scripts/printVersions.sh 
 + echo JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
++ whereis java
+java: /usr/bin/java /usr/share/java /usr/lib/jvm/java-8-openjdk-amd64/bin/java /usr/share/man/man1/java.1.gz
++ echo
+
 + java -version
-openjdk version "1.8.0_242"
-OpenJDK Runtime Environment (build 1.8.0_242-8u242-b08-0ubuntu3~18.04-b08)
-OpenJDK 64-Bit Server VM (build 25.242-b08, mixed mode)
+openjdk version "1.8.0_252"
+OpenJDK Runtime Environment (build 1.8.0_252-8u252-b09-1~18.04-b09)
+OpenJDK 64-Bit Server VM (build 25.252-b09, mixed mode)
 + mvn --version
 Apache Maven 3.6.3 (cecedd343002696d0abb50b32b541b8a6ba2883f)
 Maven home: /usr/apache-maven-3.6.3
-Java version: 1.8.0_242, vendor: Private Build, runtime: /usr/lib/jvm/java-8-openjdk-amd64/jre
+Java version: 1.8.0_252, vendor: Private Build, runtime: /usr/lib/jvm/java-8-openjdk-amd64/jre
 Default locale: en_US, platform encoding: UTF-8
-OS name: "linux", version: "5.3.0-42-generic", arch: "amd64", family: "unix"
+OS name: "linux", version: "5.3.0-46-generic", arch: "amd64", family: "unix"
 + python -V
-Python 2.7.15+
+Python 2.7.17
 + python3 -V
 Python 3.6.9
 + pip --version
@@ -191,13 +195,13 @@ Revision:     fad121066a68c4701acd362daf4287a7c309a0f5
 Kotlin:       1.3.50
 Groovy:       2.5.8
 Ant:          Apache Ant(TM) version 1.10.7 compiled on September 1 2019
-JVM:          1.8.0_242 (Private Build 25.242-b08)
-OS:           Linux 5.3.0-42-generic amd64
+JVM:          1.8.0_252 (Private Build 25.252-b09)
+OS:           Linux 5.3.0-46-generic amd64
 
 + npm -v
-6.13.7
+6.14.4
 + node -v
-v13.9.0
+v14.0.0
 + cat /etc/lsb-release /etc/os-release
 DISTRIB_ID=Ubuntu
 DISTRIB_RELEASE=18.04

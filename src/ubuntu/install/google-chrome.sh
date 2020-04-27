@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/bash -x
+##!/usr/bin/env bash
 ### every exit != 0 fails the script
 set -e
 
@@ -9,11 +10,12 @@ sudo apt update -y
 
 # (Ubuntu 16.04 only)
 # sudo apt-get install -y libindicator3-7 indicator-application libnss3-nssdb libnss3 libnspr4 libappindicator3-1 fonts-liberation xdg-utils
-sudo apt-get install -y libindicator3-7 indicator-application libnss3-dev libnss3-tools libnss3 libnspr4 libappindicator3-1 fonts-liberation xdg-utils
+sudo apt-get install -y libindicator3-7 indicator-application libnss3-dev libnss3-tools libnss3 libnspr4  libappindicator3-1 fonts-liberation xdg-utils libgbm1 
 
 wget -q -c https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 
-sudo dpkg -i google-chrome-stable_current_amd64.deb
+#sudo dpkg -i google-chrome-stable_current_amd64.deb
+sudo apt install -y ./google-chrome-stable_current_amd64.deb
 
 which google-chrome
 
