@@ -6,16 +6,17 @@ set -e
 echo "Install Google Chromium Browser"
 cd /tmp
                                           
-sudo apt update -y 
+sudo apt-get update -y 
+sudo apt-get upgrade -y 
 
 # (Ubuntu 16.04 only)
 # sudo apt-get install -y libindicator3-7 indicator-application libnss3-nssdb libnss3 libnspr4 libappindicator3-1 fonts-liberation xdg-utils
-sudo apt-get install -y libindicator3-7 indicator-application libnss3-dev libnss3-tools libnss3 libnspr4  libappindicator3-1 fonts-liberation xdg-utils libgbm1 
+sudo apt-get install -y libindicator3-7 indicator-application libnss3-dev libnss3-tools libnss3 libnspr4  libappindicator3-1 fonts-liberation xdg-utils libgbm1 libu2f-udev
 
 wget -q -c https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 
 #sudo dpkg -i google-chrome-stable_current_amd64.deb
-sudo apt install -y ./google-chrome-stable_current_amd64.deb
+sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
 
 which google-chrome
 
@@ -23,7 +24,7 @@ rm google-chrome-stable_current_amd64.deb
 
 echo "CHROMIUM_FLAGS='--no-sandbox --no-gpu --start-maximized --user-data-dir'" > $HOME/.chromium-browser.init
 
-sudo apt-get install -y xvfb openbox obmenu tint2 xfce4-panel xfce4-notifyd xfce4-whiskermenu-plugin compton feh conky-all
+sudo apt-get install -y xvfb feh openbox obmenu tint2 xfce4-panel xfce4-notifyd xfce4-whiskermenu-plugin compton conky-all
 
 sudo /etc/init.d/dbus restart
 sudo service dbus start
