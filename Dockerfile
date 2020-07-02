@@ -1,24 +1,4 @@
-# This Dockerfile is used to build an headles vnc image based on Ubuntu
-
-#### -------------------------------------------
-#### ---- OS Type, Version, and Base Image: ----
-#### -------------------------------------------
-
-#ARG OS_TYPE={OS_TYPE:-centos}
-ARG OS_TYPE={OS_TYPE:-ubuntu}
-
-#ARG OS_VERSION={OS_VERSION:-7}
-#ARG OS_VERSION={OS_VERSION:-16.04}
-ARG OS_VERSION={OS_VERSION:-18.04}
-
-ARG BASE_IMAGE=${BASE_IMAGE:-${OS_TYPE}:${OS_VERSION}}
-
-#FROM centos:7
-#FROM ubuntu:16.04
-FROM openkbs/jdk-mvn-py3
-#FROM openkbs/jdk-mvn-py3
-#FROM ${BASE_IMAGE}
-#FROM ${OS_TYPE}:${OS_VERSION}
+FROM ${BASE_IMAGE:-openkbs/jdk-mvn-py3:v1.2.2}
 
 MAINTAINER DrSnowbird "DrSnowbird@openkbs.org"
 
@@ -142,7 +122,9 @@ RUN chmod a+x /dockerstartup/vnc_startup.sh && \
 #################################################################
 #### ---- Fix missing: /host/run/dbus/system_bus_socket ---- ####
 #################################################################
-RUN sudo mkdir -p /host/run/dbus/system_bus_socket
+ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
+ENV DBUS_SYSTEM_BUS_SOCKET=/host/run/dbus/system_bus_socket
+RUN sudo mkdir -p ${DBUS_SYSTEM_BUS_SOCKET} && sudo chmod go+rw ${DBUS_SYSTEM_BUS_SOCKET}
 
 ###############################
 #### ---- VNC Startup ---- ####

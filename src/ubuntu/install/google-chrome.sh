@@ -18,7 +18,6 @@ sudo apt-get install -y libindicator3-7 indicator-application libnss3-dev libnss
 
 wget -q -c https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
 
-#sudo dpkg -i google-chrome-stable_current_amd64.deb
 sudo apt-get install -y ./google-chrome-stable_current_amd64.deb
 
 which google-chrome

@@ -158,11 +158,11 @@ If you want to map to different directory for certificates, e.g., /home/develope
 
 # Releases information
 ```
-developer@234434a87b9c:~$ /usr/scripts/printVersions.sh 
+developer@7eadfbfd1db9:~$ /usr/scripts/printVersions.sh 
 + echo JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
 JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
-+ whereis java
-java: /usr/bin/java /usr/share/java /usr/lib/jvm/java-8-openjdk-amd64/bin/java /usr/share/man/man1/java.1.gz
++ ls -al /java-8-openjdk-amd64
+lrwxrwxrwx 1 root root 33 Mar  2 23:05 /java-8-openjdk-amd64 -> /usr/lib/jvm/java-8-openjdk-amd64
 + echo
 
 + java -version
@@ -174,7 +174,7 @@ Apache Maven 3.6.3 (cecedd343002696d0abb50b32b541b8a6ba2883f)
 Maven home: /usr/apache-maven-3.6.3
 Java version: 1.8.0_252, vendor: Private Build, runtime: /usr/lib/jvm/java-8-openjdk-amd64/jre
 Default locale: en_US, platform encoding: UTF-8
-OS name: "linux", version: "5.3.0-46-generic", arch: "amd64", family: "unix"
+OS name: "linux", version: "5.3.0-61-generic", arch: "amd64", family: "unix"
 + python -V
 Python 2.7.17
 + python3 -V
@@ -196,22 +196,22 @@ Kotlin:       1.3.50
 Groovy:       2.5.8
 Ant:          Apache Ant(TM) version 1.10.7 compiled on September 1 2019
 JVM:          1.8.0_252 (Private Build 25.252-b09)
-OS:           Linux 5.3.0-46-generic amd64
+OS:           Linux 5.3.0-61-generic amd64
 
 + npm -v
 6.14.4
 + node -v
-v14.0.0
+v13.14.0
 + cat /etc/lsb-release /etc/os-release
 DISTRIB_ID=Ubuntu
 DISTRIB_RELEASE=18.04
 DISTRIB_CODENAME=bionic
-DISTRIB_DESCRIPTION="Ubuntu 18.04.2 LTS"
+DISTRIB_DESCRIPTION="Ubuntu 18.04.4 LTS"
 NAME="Ubuntu"
-VERSION="18.04.2 LTS (Bionic Beaver)"
+VERSION="18.04.4 LTS (Bionic Beaver)"
 ID=ubuntu
 ID_LIKE=debian
-PRETTY_NAME="Ubuntu 18.04.2 LTS"
+PRETTY_NAME="Ubuntu 18.04.4 LTS"
 VERSION_ID="18.04"
 HOME_URL="https://www.ubuntu.com/"
 SUPPORT_URL="https://help.ubuntu.com/"
