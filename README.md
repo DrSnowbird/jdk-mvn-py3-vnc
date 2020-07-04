@@ -4,14 +4,7 @@
 # Components
 * VNC/noVNC for both browswer-based VNC and VNC-client to connect to use Desktop GUI from Docker container.
 * Ubuntu 18.04 LTS now and we will use Ubuntu 20.04 on or about 2020-04-15 as LTS Docker base image.
-* openjdk version "1.8.0_252"
-  OpenJDK Runtime Environment (build 1.8.0_252-8u252-b09-1~18.04-b09)
-  OpenJDK 64-Bit Server VM (build 25.252-b09, mixed mode)
-* Apache Maven 3.6
-* Python 3.6 / Python 2.7 + pip 19 + Python3 virtual environments (venv, virtualenv, virtualenvwrapper, mkvirtualenv, ..., etc.)
-* Node v13 + npm 6 (from NodeSource official Node Distribution)
-* Gradle 6
-* Other tools: git wget unzip vim python python-setuptools python-dev python-numpy, ..., etc.
+* [openkbs/jdk-mvn-py3 README.md](https://github.com/DrSnowbird/jdk-mvn-py3/blob/master/README.md)
 * VNC/noVNC for remote Desktop over Container Platform (Openshift, Kubernetes, etc.) 
 * Google-Chrome 81.0 + Firefox 75.0
 
@@ -19,9 +12,9 @@
 This project mainly adopt the [ConSol docker-headless-vnc-container](https://github.com/ConSol/docker-headless-vnc-container) implementation.
 
 # Run (recommended for easy-start)
-It's highly recommended to change vnc password to prevent others using the default password to get into your container, modify the file "**./docker.env**" as below and save the file before you hit, "**./run.sh**":
+It's highly recommended to change vnc password to prevent others using the default password to get into your container, modify the file "**./.env**" as below and save the file before you hit, "**./run.sh**":
 ```
-(./docker.env) file:
+
 
 #### ---- VNC Password: (default is vncpassword) ----
 VNC_PW=VeryXtrongPasswordHere!
@@ -61,7 +54,7 @@ VNC_PW, default: vncpassword , e.g., change to MySpecial!(Password%)
 # Screen (Desktop) Resolution
 Two ways to change Screen resolutions.
 
-## 1.) Modify ./docker-run.env file
+## 1.) Modify ./.env file
 ```
 #VNC_RESOLUTION="1280x1024"
 VNC_RESOLUTION=1920x1280

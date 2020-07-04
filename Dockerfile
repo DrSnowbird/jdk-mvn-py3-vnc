@@ -1,4 +1,4 @@
-FROM ${BASE_IMAGE:-openkbs/jdk-mvn-py3:v1.2.2}
+FROM ${BASE_IMAGE:-openkbs/jdk-mvn-py3:v1.2.3}
 
 MAINTAINER DrSnowbird "DrSnowbird@openkbs.org"
 
