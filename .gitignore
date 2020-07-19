@@ -34,3 +34,5 @@ tmp*
 # temporary directory
 workspace
 data
+
+**BACKUP/

@@ -1,3 +1,4 @@
+#FROM ${BASE_IMAGE:-openkbs/jdk-mvn-py3}
 FROM ${BASE_IMAGE:-openkbs/jdk-mvn-py3:v1.2.3}
 
 MAINTAINER DrSnowbird "DrSnowbird@openkbs.org"
@@ -124,6 +125,11 @@ RUN chmod a+x /dockerstartup/vnc_startup.sh && \
 #################################################################
 ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
 ENV DBUS_SYSTEM_BUS_SOCKET=/host/run/dbus/system_bus_socket
+
+#### ---- fixing DBUS connection issue ----
+RUN echo "Set disable_coredump false" >> /etc/sudo.conf && \
+    sudo apt-get install -y dbus-x11
+
 RUN sudo mkdir -p ${DBUS_SYSTEM_BUS_SOCKET} && sudo chmod go+rw ${DBUS_SYSTEM_BUS_SOCKET}
 
 ###############################
