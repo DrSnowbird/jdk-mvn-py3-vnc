@@ -7,7 +7,7 @@ rpm --import https://dl-ssl.google.com/linux/linux_signing_key.pub
 yum -y install chromium chromium-libs chromium-libs-media
 yum clean all
 
-ln -s /usr/bin/chromium-browser /usr/bin/google-chrome
+#ln -s /usr/bin/chromium-browser /usr/bin/google-chrome
 
 ### fix to start chromium in a Docker container, see https://github.com/ConSol/docker-headless-vnc-container/issues/2
 echo "CHROMIUM_FLAGS='--no-sandbox --start-maximized --user-data-dir'" > $HOME/.chromium-browser.init

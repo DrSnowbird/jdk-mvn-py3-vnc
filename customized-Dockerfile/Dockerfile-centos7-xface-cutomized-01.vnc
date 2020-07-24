@@ -13,7 +13,7 @@ FROM ${BASE_IMAGE:-centos:7}
 LABEL io.k8s.description="Headless VNC Container with IceWM window manager, firefox and chromium" \
       io.k8s.display-name="Headless VNC Container based on Centos" \
       io.openshift.expose-services="6901:http,5901:xvnc" \
-      io.openshift.tags="vnc, centos, xfce" \
+      io.openshift.tags="vnc, centos, icewm" \
       io.openshift.non-scalable=true
 
 MAINTAINER DrSnowbird "DrSnowbird@openkbs.org"
@@ -32,8 +32,8 @@ ENV GROUP_ID=${GROUP_ID:-1000}
 # noVNC webport, connect via http://<IP>:6901/?password=vncpassword
 
 ENV DISPLAY=${DISPLAY:-":1"}
-ENV VNC_PORT=${VNC_PORT:-5901}
-ENV NO_VNC_PORT=${NO_VNC_PORT:-6901}
+ENV VNC_PORT=${VNC_PORT:-"5901"}
+ENV NO_VNC_PORT=${NO_VNC_PORT:-"6901"}
 
 EXPOSE ${VNC_PORT}
 EXPOSE ${NO_VNC_PORT}
@@ -43,6 +43,7 @@ EXPOSE ${NO_VNC_PORT}
 #### ---------------------------------------
 #ENV WINDOW_MANAGER=${WINDOW_MANAGER:-icwm}
 ENV WINDOW_MANAGER=${WINDOW_MANAGER:-xfce}
+
 
 #### -------------------------
 #### ---- user: developer ----
@@ -68,6 +69,17 @@ RUN groupadd ${USER} && useradd ${USER} -m -d ${HOME} -s /bin/bash -g ${USER} &&
     echo "${USER} ALL=NOPASSWD:ALL" | tee -a /etc/sudoers && \
     chown ${USER}:${USER} -R ${HOME}
 
+### Envrionment config
+ENV HOME=${HOME} \
+    TERM=xterm \
+    STARTUPDIR=/dockerstartup \
+    INST_SCRIPTS=${HOME}/install \
+    NO_VNC_HOME=${HOME}/noVNC \
+    VNC_COL_DEPTH=24 \
+    VNC_RESOLUTION=1280x1024 \
+    VNC_PW=vncpassword \
+    VNC_VIEW_ONLY=false
+
 ##################################
 #### Set up user environments ####
 ##################################
@@ -87,26 +99,16 @@ RUN mkdir -p ${WORKSPACE} ${DATA}
 ##################################
 #### ---- VNC / noVNC ----    ####
 ##################################
-ARG VNC_INSTALL_HOME=${HOME}
-#ARG VNC_INSTALL_HOME=
-### Envrionment config
+
 ENV TERM=xterm \
-    STARTUPDIR=${VNC_INSTALL_HOME}/dockerstartup \
-    INST_SCRIPTS=${VNC_INSTALL_HOME}/install \
-    NO_VNC_HOME=${VNC_INSTALL_HOME}/noVNC \
+    STARTUPDIR=/dockerstartup \
+    INST_SCRIPTS=${HOME}/install \
+    NO_VNC_HOME=${HOME}/noVNC \
     VNC_COL_DEPTH=24 \
-    VNC_RESOLUTION=1280x1024 \
-    VNC_PW=vncpassword \
     VNC_VIEW_ONLY=false
 
 USER 0
 WORKDIR ${HOME}
-
-#### -----------------------------------
-#### ---- Install CA certificates: ----
-#### -----------------------------------
-#ADD ./certificates $/certificates
-#RUN ${SCRIPT_DIR}/setup_system_certificates.sh
 
 #### -----------------------------------------------------------------
 #### ---- VNC Resolution (1280x1024, 1600x1024, 1920x1280, etc.): ----
@@ -133,17 +135,14 @@ ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 RUN ${INST_SCRIPTS}/tigervnc.sh
 RUN ${INST_SCRIPTS}/no_vnc.sh
 
-#### ==================================
-#### ---- Install Google-Chrome:  =----
-#### ==================================
-### Install google-chrome or chrome browser
-RUN ${INST_SCRIPTS}/chrome.sh
-RUN ${INST_SCRIPTS}/google-chrome.sh
+### Install Firefox browser
+#RUN ${INST_SCRIPTS}/firefox.sh
+#RUN yum update -y firefox
+RUN ${INST_SCRIPTS}/firefox_latest.sh
 
-#### ------------------------------------------------
-#### ---- Desktop setup (Google-Chrome, Firefox) ----
-#### ------------------------------------------------
-#ADD ./config/Desktop $HOME/
+### Install chrome browser
+RUN ${INST_SCRIPTS}/chrome.sh
+#RUN ${INST_SCRIPTS}/google-chrome.sh
 
 ### Install WINDOW_MANAGER (xfce or icewm) UI
 RUN ${INST_SCRIPTS}/${WINDOW_MANAGER}_ui.sh
@@ -154,34 +153,27 @@ RUN ${INST_SCRIPTS}/libnss_wrapper.sh
 ADD ./src/common/scripts ${STARTUPDIR}
 RUN ${INST_SCRIPTS}/set_user_permission.sh ${STARTUPDIR} ${HOME}
 
+#### --------------------------
+#### ---- XDG Open Utility ----
+#### --------------------------
+## -- Ubuntu --
+#RUN apt-get install -y xdg-utils --fix-missing
+
+#COPY ./src/common/vnc-xstartup ${HOME}/.vnc/startup && \
+#    chown ${USER}:${USER} ${HOME}/.vnc/startup && \
+#    chmod 0755 ${HOME}/.vnc/startup
+    
 ##################################
-#### ---- VNC Startup ----    ####
+#### ---- VNC Startup ---- ####
 ##################################
 WORKDIR ${HOME}
 USER ${USER}
 
-#### ==================================
-#### ---- Install Firefox browser: ----
-#### ==================================
-#RUN ${INST_SCRIPTS}/firefox.sh
-#RUN yum update -y firefox
-#ENV FIREFOX_VERSION=${FIREFOX_VERSION:-79.0b9}
-RUN ${INST_SCRIPTS}/firefox_latest.sh
-
-#### ===============================================
-#### ---- Change Owner to $USER:$USER for $HOME ----
-#### ===============================================
-ADD ./wrapper_process.sh $HOME/
-
-RUN sudo chown -R ${USER}:${USER} ${HOME}
-
 ENTRYPOINT ["/bin/bash", "-c", "${STARTUPDIR}/vnc_startup.sh"]
-CMD ["--wait"]
+#CMD ["--wait"]
 
 ## ---- Debug Use ----
 #CMD ["/bin/bash"]
-#CMD "$HOME/wrapper_process.sh"
-
 # (or)
 #COPY ./test/say_hello.sh $HOME/
 #RUN sudo chmod +x $HOME/say_hello.sh

@@ -1,6 +1,6 @@
-#!/bin/bash -x
+#!/bin/bash
 ### every exit != 0 fails the script
-#set -e
+set -e
 
 ## print out help
 help (){
@@ -35,9 +35,7 @@ if [[ $1 =~ -h|--help ]]; then
 fi
 
 # should also source $STARTUPDIR/generate_container_user
-if [ -s $HOME/.bashrc ]; then
-    source $HOME/.bashrc
-fi
+source $HOME/.bashrc
 
 # add `--skip` to startup args, to skip the VNC startup procedure
 if [[ $1 =~ -s|--skip ]]; then

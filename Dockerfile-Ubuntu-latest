@@ -1,22 +1,5 @@
-# This Dockerfile is used to build an headles vnc image based on Ubuntu
-
-#### -------------------------------------------
-#### ---- OS Type, Version, and Base Image: ----
-#### -------------------------------------------
-
-#ARG OS_TYPE={OS_TYPE:-centos}
-ARG OS_TYPE={OS_TYPE:-ubuntu}
-
-#ARG OS_VERSION={OS_VERSION:-7}
-ARG OS_VERSION={OS_VERSION:-16.04}
-
-ARG BASE_IMAGE=${BASE_IMAGE:-${OS_TYPE}:${OS_VERSION}}
-
-#FROM centos:7
-#FROM ubuntu:16.04
-FROM openkbs/jdk-mvn-py3
-#FROM ${BASE_IMAGE}
-#FROM ${OS_TYPE}:${OS_VERSION}
+#FROM ${BASE_IMAGE:-openkbs/jdk-mvn-py3}
+FROM ${BASE_IMAGE:-openkbs/jdk-mvn-py3:v1.2.3}
 
 MAINTAINER DrSnowbird "DrSnowbird@openkbs.org"
 
@@ -52,18 +35,24 @@ LABEL io.k8s.description="Headless VNC Container with ${WINDOW_MANAGER} window m
       io.openshift.tags="vnc, ${OS_TYPE}, ${WINDOW_MANAGER}" \
       io.openshift.non-scalable=true
 
-### Envrionment config
-ENV HOME=/home/developer 
+##################################
+#### ---- VNC / noVNC ----    ####
+##################################
 
-ENV \
-    TERM=xterm \
+ENV TERM=xterm \
     STARTUPDIR=/dockerstartup \
     INST_SCRIPTS=${HOME}/install \
     NO_VNC_HOME=${HOME}/noVNC \
     VNC_COL_DEPTH=24 \
     VNC_VIEW_ONLY=false
 
+USER 0
 WORKDIR ${HOME}
+
+### Install CA certificates:
+RUN apt-get install -y ca-certificates 
+ADD ./certificates /certificates
+RUN ${SCRIPT_DIR}/setup_system_certificates.sh
 
 #### -----------------------------------------------------------------
 #### ---- VNC Resolution (1280x1024, 1600x1024, 1920x1280, etc.): ----
@@ -86,77 +75,82 @@ RUN find ${INST_SCRIPTS} -name '*.sh' -exec chmod a+x {} +
 RUN ${INST_SCRIPTS}/tools.sh
 ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 
-### Install custom fonts for Ubuntu only
+### Install custom fonts for Ubuntu only, 
+### For CentOS, it will be no-op (do nothing)
 #RUN ${INST_SCRIPTS}/install_custom_fonts.sh
-RUN if [ "${OS_TYPE}" = "ubuntu" ]; then ${INST_SCRIPTS}/install_custom_fonts.sh; fi
 
 ### Install xvnc-server & noVNC - HTML5 based VNC viewer
 RUN ${INST_SCRIPTS}/tigervnc.sh
 RUN ${INST_SCRIPTS}/no_vnc.sh
 
-### Install firefox and chrome browser
-RUN ${INST_SCRIPTS}/firefox.sh
-RUN ${INST_SCRIPTS}/chrome.sh
+### Install firefox browser
+# RUN ${INST_SCRIPTS}/firefox.sh
+RUN apt-get install -y firefox
+
+#### ============================================
+#### ---- Google-Chrome install:  ----
+#### ============================================
+RUN ${INST_SCRIPTS}/google-chrome.sh 
+    
+#### ------------------------------------------------
+#### ---- Desktop setup (Google-Chrome, Firefox) ----
+#### ------------------------------------------------
+ADD ./config/Desktop $HOME/
 
 ### Install WINDOW_MANAGER (xfce or icewm) UI
+RUN apt-get --fix-missing update
 RUN ${INST_SCRIPTS}/${WINDOW_MANAGER}_ui.sh
 ADD ./src/common/${WINDOW_MANAGER}/ ${HOME}/
 
 ### configure startup
-RUN ${INST_SCRIPTS}/libnss_wrapper.sh
+# (remove this when Ubuntu 18.04 Bionic)
+# RUN ${INST_SCRIPTS}/libnss_wrapper.sh
 ADD ./src/common/scripts ${STARTUPDIR}
 RUN ${INST_SCRIPTS}/set_user_permission.sh ${STARTUPDIR} ${HOME}
 
-#### -------------------------
-#### ---- user: developer ----
-#### -------------------------
-ENV USER=${USER:-developer}
-ENV USER_NAME=${USER}
+#### --------------------------
+#### ---- XDG Open Utility ----
+#### --------------------------
+RUN apt-get install -y xdg-utils --fix-missing
 
-ENV HOME=/home/${USER}
+#### -------------------------------------
+#### ---- Reset Owner and Permissions ----
+#### -------------------------------------
+RUN chmod a+x /dockerstartup/vnc_startup.sh && \
+    mkdir ${HOME}/.local && \
+    chown -R ${USER}:${USER} ${HOME}/.config ${HOME}/.local
 
-ENV OS_TYPE=${OS_TYPE}
+#################################################################
+#### ---- Fix missing: /host/run/dbus/system_bus_socket ---- ####
+#################################################################
+ENV DBUS_SYSTEM_BUS_ADDRESS=unix:path=/host/run/dbus/system_bus_socket
+ENV DBUS_SYSTEM_BUS_SOCKET=/host/run/dbus/system_bus_socket
 
-#RUN set -x && \
-#    if [ "${OS_TYPE}" = "ubuntu" ]; then \
-#        apt-get install -y sudo; \
-#        apt-get clean -y all; \
-#    fi
-#RUN set -x && \
-#    if [ "${OS_TYPE}" = "centos" ]; then \
-#        \yum install -y sudo; \
-#        yum clean -y all; \
-#    fi"
+#### ---- fixing DBUS connection issue ----
+RUN echo "Set disable_coredump false" >> /etc/sudo.conf && \
+    sudo apt-get install -y dbus-x11
 
-## -- Ubuntu --
-RUN apt-get install -y sudo && \
-    apt-get clean all
-## -- Centos --
-#RUN yum install -y sudo && \
-#    yum clean all
-    
-RUN \
-    groupadd -f --gid ${GROUP_ID} ${USER} && \
-    #useradd ${USER} -m -d ${HOME} -s /bin/bash -u ${USER_ID} -g ${GROUP_ID} && \
-    useradd ${USER} -m -d ${HOME} -s /bin/bash -u ${USER_ID} -g ${USER} && \
-    ## -- Ubuntu -- \
-    usermod -aG sudo ${USER} && \
-    ## -- Centos -- \
-    #usermod -aG wheel ${USER} && \
-    echo "${USER} ALL=NOPASSWD:ALL" | tee -a /etc/sudoers && \
-    export uid=${USER_ID} gid=${GROUP_ID} && \
-    chown ${USER}:${USER} -R ${HOME}
-    
-RUN \
-    mkdir -p ${HOME}/workspace && \
-    chown ${USER}:${USER} -R ${HOME}/workspace
+RUN sudo mkdir -p ${DBUS_SYSTEM_BUS_SOCKET} && sudo chmod go+rw ${DBUS_SYSTEM_BUS_SOCKET}
+
+###############################
+#### ---- VNC Startup ---- ####
+###############################
 
 WORKDIR ${HOME}
 
 USER ${USER}
 
-#ENTRYPOINT ["/dockerstartup/vnc_startup.sh"]
-ENTRYPOINT ["/bin/bash", "-c", "${STARTUPDIR}/vnc_startup.sh"]
+ENTRYPOINT ["/dockerstartup/vnc_startup.sh"]
 
-CMD ["--wait"]
+ADD ./wrapper_process.sh $HOME/
 
+# CMD ["--wait"]
+
+## ---- Debug Use ----
+#CMD ["/bin/bash"]
+CMD "$HOME/wrapper_process.sh"
+
+# (or)
+#COPY ./test/say_hello.sh $HOME/
+#RUN sudo chmod +x $HOME/say_hello.sh
+#CMD "$HOME/say_hello.sh"
