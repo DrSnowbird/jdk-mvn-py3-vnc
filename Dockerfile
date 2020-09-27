@@ -1,5 +1,5 @@
-#FROM ${BASE_IMAGE:-openkbs/jdk-mvn-py3}
-FROM ${BASE_IMAGE:-openkbs/jdk-mvn-py3:v1.2.3}
+FROM ${BASE_IMAGE:-openkbs/jdk-mvn-py3}
+#FROM ${BASE_IMAGE:-openkbs/jdk-mvn-py3:v1.2.6}
 
 MAINTAINER DrSnowbird "DrSnowbird@openkbs.org"
 
