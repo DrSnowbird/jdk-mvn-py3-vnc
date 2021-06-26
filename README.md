@@ -1,3 +1,10 @@
+# ` Please consider to donate what you can to help UNICEF and WHO if you like what we provide to you for free. Thanks so much!`
+* [`World Health Organization (WHO) COVID-19 Solidarity Response Fund`](https://www.who.int/emergencies/diseases/novel-coronavirus-2019/donate)
+* [`Help UNICEF’s COVID-19 Response`](https://donate.unicef.org/)
+* [`Help RedCross`](https://www.redcross.org/donate)
+
+# (New) Added 'Iridium Browser' for better privacy protection.
+
 # OpenJDK Java 8 + Maven 3.6 + Python 3.6/2.7 + pip 20 + node 14 + npm 6.14 + Gradle 6 + noVNC/VNC (as Cluster Container Desktop)
 [![](https://images.microbadger.com/badges/image/openkbs/jdk-mvn-py3-vnc.svg)](https://microbadger.com/images/openkbs/jdk-mvn-py3-vnc "Get your own image badge on microbadger.com") [![](https://images.microbadger.com/badges/version/openkbs/jdk-mvn-py3-vnc.svg)](https://microbadger.com/images/openkbs/jdk-mvn-py3-vnc "Get your own version badge on microbadger.com")
 
@@ -10,7 +17,7 @@
 * VNC/noVNC for remote Desktop over Container Platform (Openshift, Kubernetes, etc.) 
 * Google Chrome and Firefox
 
-# Note:
+# Credits:
 This project mainly adopt the [ConSol docker-headless-vnc-container](https://github.com/ConSol/docker-headless-vnc-container) implementation.
 
 # Run (recommended for easy-start)

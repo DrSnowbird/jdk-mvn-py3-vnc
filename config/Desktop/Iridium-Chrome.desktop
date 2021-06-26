@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Iridium Chrome
+Comment=Access the Internet
+Exec=/usr/bin/iridium-browser --no-sandbox %U https://www.redcross.org/donate https://donate.unicef.org/ https://www.who.int/emergencies/diseases/novel-coronavirus-2019/donate
+Icon=iridium-browser
+Path=
+Terminal=false
+StartupNotify=false
