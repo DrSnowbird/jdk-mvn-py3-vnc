@@ -1,7 +1,7 @@
-# ` Please consider to donate what you can to help UNICEF and WHO if you like what we provide to you for free. Thanks so much!`
+# `Please consider to donate what you can to help UNICEF, WHO, and Red Cross if you like what we provide to you for free. Thanks so much!`
 * [`World Health Organization (WHO) COVID-19 Solidarity Response Fund`](https://www.who.int/emergencies/diseases/novel-coronavirus-2019/donate)
 * [`Help UNICEF’s COVID-19 Response`](https://donate.unicef.org/)
-* [`Help RedCross`](https://www.redcross.org/donate)
+* [`Help Red Cross`](https://www.redcross.org/donate)
 
 # (New) Added 'Iridium Browser' for better privacy protection.
 
