@@ -9,6 +9,17 @@ MAINTAINER DrSnowbird "DrSnowbird@openkbs.org"
 ENV USER_ID=${USER_ID:-1000}
 ENV GROUP_ID=${GROUP_ID:-1000}
 
+########################
+#### ---- Yarn ---- ####
+########################
+# Ref: https://classic.yarnpkg.com/en/docs/install/#debian-stable
+# fix yarn key
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - && \
+    echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list && \
+    sudo apt-get update -y && \ 
+    sudo apt-get install -y yarn
+
+
 #### --------------------------------------------------
 #### ---- Connection ports for controlling the UI: ----
 #### --------------------------------------------------
@@ -83,10 +94,6 @@ ENV LANG='en_US.UTF-8' LANGUAGE='en_US:en' LC_ALL='en_US.UTF-8'
 RUN ${INST_SCRIPTS}/tigervnc.sh
 RUN ${INST_SCRIPTS}/no_vnc.sh
 
-### Install firefox browser
-# RUN ${INST_SCRIPTS}/firefox.sh
-RUN apt-get install -y firefox
-
 ### Install WINDOW_MANAGER (xfce or icewm) UI
 RUN apt-get --fix-missing update
 RUN ${INST_SCRIPTS}/${WINDOW_MANAGER}_ui.sh
@@ -98,6 +105,12 @@ ADD ./src/common/${WINDOW_MANAGER}/ ${HOME}/
 ADD ./src/common/scripts ${STARTUPDIR}
 RUN ${INST_SCRIPTS}/set_user_permission.sh ${STARTUPDIR} ${HOME}
 
+#######################################
+#### ---- Firefox browser     ---- ####
+#######################################
+# RUN ${INST_SCRIPTS}/firefox.sh
+RUN apt-get install -y firefox
+
 #### --------------------------
 #### ---- XDG Open Utility ----
 #### --------------------------
@@ -106,23 +119,33 @@ RUN apt-get install -y xdg-utils --fix-missing
 #######################################
 #### ---- Iridium Web Browser ---- ####
 #######################################
-RUN wget -qO - https://downloads.iridiumbrowser.de/ubuntu/iridium-release-sign-01.pub|apt-key add - && \
-    echo "deb [arch=amd64] https://downloads.iridiumbrowser.de/deb/ stable main" | tee /etc/apt/sources.list.d/iridium-browser.list && \
-    echo "#deb-src https://downloads.iridiumbrowser.de/deb/ stable main" | tee -a /etc/apt/sources.list.d/iridium-browser.list && \
-    apt-get update && \
-    apt-get install -y iridium-browser
+# (download files not available for Ubuntu)
+#RUN wget -qO - https://downloads.iridiumbrowser.de/ubuntu/iridium-release-sign-01.pub|apt-key add - && \
+#    echo "deb [arch=amd64] https://downloads.iridiumbrowser.de/deb/ stable main" | tee /etc/apt/sources.list.d/iridium-#browser.list && \
+#    echo "#deb-src https://downloads.iridiumbrowser.de/deb/ stable main" | tee -a /etc/apt/sources.list.d/iridium-#browser.list && \
+#    apt-get update && \
+#    apt-get install -y iridium-browser
+#
 
-#################################
-#### ---- Google-Chrome ---- ####
-#################################
-#RUN ${INST_SCRIPTS}/google-chrome.sh 
-RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt-get install -y libcurl3-gnutls libcurl3-nss libcurl4 && \
-    apt-get install -y fonts-liberation libgbm1 xdg-utils && \
-    dpkg -i google-chrome-stable_current_amd64.deb && \
-    rm -f google-chrome-stable_current_amd64.deb
-RUN apt install -y libcanberra-gtk0 libcanberra-gtk-module
-RUN apt-get install -y libcanberra-gtk3-module
+#######################################
+#### ---- Google-Chrome       ---- ####
+#######################################
+RUN ${INST_SCRIPTS}/google-chrome.sh
+
+#ARG CHROME_DEB_URL=https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+#ARG CHROME_DEB=google-chrome-stable_current_amd64.deb
+#wget -cq https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+#RUN wget -cq ${CHROME_DEB_URL} && \
+#    sudo apt-get update && \
+#    sudo apt-get --fix-broken install -y && \
+#    sudo apt-get install -y fonts-liberation libnspr4 libnss3 && \
+#    sudo dpkg -i ${CHROME_DEB} && \
+#    rm ${CHROME_DEB}
+
+#######################################
+#### ---- Desktop setup:      ---- ####
+#######################################
+COPY ./config/Desktop ${HOME}/Desktop
 
 #### ------------------------------------------------
 #### ---- Desktop setup (Google-Chrome, Firefox) ----
@@ -149,6 +172,57 @@ RUN echo "Set disable_coredump false" >> /etc/sudo.conf && \
 
 RUN sudo mkdir -p ${DBUS_SYSTEM_BUS_SOCKET} && sudo chmod go+rw ${DBUS_SYSTEM_BUS_SOCKET}
 
+########################################
+#### ------- OpenJDK Installation ------
+########################################
+ENV JAVA_VERSION=11 
+#ENV JAVA_VERSION=${JAVA_VERSION:-11}
+
+RUN apt-get update && apt-get install -y locales && rm -rf /var/lib/apt/lists/* && \
+    localedef -i en_US -c -f UTF-8 -A /usr/share/locale/locale.alias en_US.UTF-8
+ENV LANG en_US.utf8
+
+# A few reasons for installing distribution-provided OpenJDK:
+#
+#  1. Oracle.  Licensing prevents us from redistributing the official JDK.
+#
+#  2. Compiling OpenJDK also requires the JDK to be installed, and it gets
+#     really hairy.
+#
+#     For some sample build times, see Debian's buildd logs:
+#       https://buildd.debian.org/status/logs.php?pkg=openjdk-8
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		bzip2 \
+		unzip \
+		xz-utils \
+	&& rm -rf /var/lib/apt/lists/*
+
+# Default to UTF-8 file.encoding
+ENV LANG C.UTF-8
+
+ENV JAVA_HOME=/usr/lib/jvm/java-${JAVA_VERSION}-openjdk-amd64
+ENV PATH=$JAVA_HOME/bin:$PATH
+
+RUN set -ex; \
+	\
+# deal with slim variants not having man page directories (which causes "update-alternatives" to fail)
+	if [ ! -d /usr/share/man/man1 ]; then \
+		mkdir -p /usr/share/man/man1; \
+	fi; \
+	\
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
+#		openjdk-${JAVA_VERSION}-jdk="$JAVA_DEBIAN_VERSION" \
+		openjdk-${JAVA_VERSION}-jdk \
+	; \
+	rm -rf /var/lib/apt/lists/*; \
+	\
+# update-alternatives so that future installs of other OpenJDK versions don't change /usr/bin/java
+	update-alternatives --get-selections | awk -v home="$(readlink -f "$JAVA_HOME")" 'index($3, home) == 1 { $2 = "manual"; print | "update-alternatives --set-selections" }'; \
+# ... and verify that it actually worked for one of the alternatives we care about
+	update-alternatives --query java | grep -q 'Status: manual'
+	
 ###############################
 #### ---- VNC Startup ---- ####
 ###############################
