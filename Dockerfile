@@ -9,6 +9,9 @@ MAINTAINER DrSnowbird "DrSnowbird@openkbs.org"
 ENV USER_ID=${USER_ID:-1000}
 ENV GROUP_ID=${GROUP_ID:-1000}
 
+USER 0
+WORKDIR ${HOME}
+
 ########################
 #### ---- Yarn ---- ####
 ########################
@@ -57,8 +60,6 @@ ENV TERM=xterm \
     VNC_COL_DEPTH=24 \
     VNC_VIEW_ONLY=false
 
-USER 0
-WORKDIR ${HOME}
 
 ### Install CA certificates:
 RUN apt-get install -y ca-certificates 
